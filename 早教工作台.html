@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>宝宝早教工作台</title>
+  <style>
+/* ===== 早教工作台样式 ===== */
+:root {
+  --primary: #FF8A65;
+  --primary-light: #FFCCBC;
+  --bg: #f5f0eb;
+  --card-bg: #ffffff;
+  --text: #3d3d3d;
+  --text-light: #888;
+  --border: #e8e0d8;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-hover: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 80px;
+}
+
+/* ===== 顶部标题栏 ===== */
+.app-header {
+  background: linear-gradient(135deg, #FF8A65, #FF7043);
+  color: white;
+  padding: 20px 16px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(255,112,67,0.2);
+}
+
+.app-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-header .subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+/* ===== 底部导航 ===== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 6px 4px;
+  cursor: pointer;
+  color: var(--text-light);
+  font-size: 11px;
+  transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-item .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+.nav-item.active { color: var(--primary); font-weight: 600; }
+
+/* ===== 页面容器 ===== */
+.page {
+  display: none;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  animation: fadeIn 0.3s ease;
+}
+
+.page.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 主题横幅 ===== */
+.theme-banner {
+  border-radius: var(--radius);
+  padding: 20px;
+  color: white;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.theme-banner-icon { font-size: 40px; }
+.theme-banner-label { font-size: 12px; opacity: 0.85; }
+.theme-banner-name { font-size: 22px; font-weight: 700; margin: 2px 0; }
+.theme-banner-desc { font-size: 13px; opacity: 0.9; line-height: 1.4; max-width: 360px; }
+.theme-banner-date {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 12px;
+  background: rgba(255,255,255,0.25);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* ===== 统计卡片 ===== */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+
+.stat-label { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+.stat-value { font-size: 28px; font-weight: 700; color: var(--primary); }
+.stat-total { font-size: 14px; color: var(--text-light); font-weight: 400; }
+
+.stat-bar {
+  height: 6px;
+  background: #f0e8e0;
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* ===== 区块标题 ===== */
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 20px 0 12px;
+  color: var(--text);
+}
+
+/* ===== 模块卡片网格 ===== */
+.module-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.module-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all 0.25s;
+  border: 2px solid transparent;
+}
+
+.module-card:hover, .module-card:active {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+.module-card.completed {
+  border-color: #81C784;
+  background: #f8fbf8;
+}
+
+.module-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-left: 4px solid var(--primary);
+}
+
+.module-card-icon { font-size: 28px; }
+.module-card-info { flex: 1; }
+.module-card-name { font-size: 15px; font-weight: 600; }
+.module-card-goal { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+
+.module-check {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.module-check.checked {
+  background: #66BB6A;
+  border-color: #66BB6A;
+}
+
+.module-card-body { padding: 0 14px 14px; }
+.task-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.task-desc { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 8px; }
+
+.task-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+
+.task-tag {
+  background: #f5f0eb;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #666;
+}
+
+.task-principle {
+  font-size: 11px;
+  color: var(--text-light);
+  background: #fff8f0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border-left: 2px solid #FFCC80;
+}
+
+.module-card-footer {
+  padding: 8px 14px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--text-light);
+  border-top: 1px solid #f0e8e0;
+}
+
+.module-card.completed .module-card-footer { color: #66BB6A; }
+
+/* ===== 原则提醒条 ===== */
+.principles-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.principle-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.principle-chip-icon { font-size: 16px; }
+.principle-chip-title { font-size: 12px; font-weight: 500; }
+
+/* ===== 页面头部 ===== */
+.page-header { margin-bottom: 16px; }
+.page-header h2 { font-size: 20px; font-weight: 700; }
+.page-header p { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+
+/* ===== 筛选栏 ===== */
+.filter-bar {
+  background: white;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+
+.filter-group { margin-bottom: 10px; }
+.filter-group:last-child { margin-bottom: 0; }
+.filter-label { font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; }
+
+.filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.filter-chip {
+  border: 1px solid var(--border);
+  background: white;
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text);
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filter-chip.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.filter-result { font-size: 12px; color: var(--text-light); margin-bottom: 12px; padding-left: 4px; }
+
+/* ===== 活动卡片 ===== */
+.activity-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.activity-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  box-shadow: var(--shadow);
+}
+
+.activity-card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.activity-domain { font-size: 11px; color: var(--primary); font-weight: 600; }
+.activity-theme { font-size: 11px; color: var(--text-light); background: #f5f0eb; padding: 2px 8px; border-radius: 4px; }
+
+.activity-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.activity-desc { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 8px; }
+
+.activity-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.activity-tag { font-size: 11px; color: #666; background: #f5f0eb; padding: 3px 8px; border-radius: 6px; }
+
+/* ===== 空状态 ===== */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); font-size: 14px; }
+
+/* ===== 发育观察 ===== */
+.dev-overview { margin-bottom: 20px; }
+
+.dev-overview-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.dev-overview-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dev-overview-inner {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dev-overview-percent { font-size: 22px; font-weight: 700; color: var(--primary); }
+.dev-overview-label { font-size: 10px; color: var(--text-light); }
+
+.dev-overview-title { font-size: 16px; font-weight: 600; }
+.dev-overview-age { font-size: 13px; color: #555; margin: 4px 0; }
+.dev-overview-note { font-size: 12px; color: var(--text-light); }
+
+.dev-categories { display: flex; flex-direction: column; gap: 16px; }
+
+.dev-category { background: white; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+
+.dev-category-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.dev-category-icon { font-size: 20px; }
+.dev-category-name { font-size: 15px; font-weight: 600; flex: 1; }
+.dev-category-stat { font-size: 13px; color: var(--text-light); }
+
+.dev-category-bar { height: 5px; background: #f0e8e0; border-radius: 3px; margin-bottom: 12px; overflow: hidden; }
+.dev-category-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.4s; }
+
+.dev-items { display: flex; flex-direction: column; gap: 4px; }
+
+.dev-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dev-item:active { background: #f9f5f0; }
+.dev-item.checked { background: #f1f8f1; }
+
+.dev-item-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.dev-item-check.checked { background: #66BB6A; border-color: #66BB6A; }
+
+.dev-item-text { flex: 1; font-size: 13px; }
+.dev-item.checked .dev-item-text { color: #4CAF50; }
+
+.dev-item-age { font-size: 10px; color: var(--text-light); background: #f5f0eb; padding: 2px 6px; border-radius: 4px; }
+.dev-item.current-age .dev-item-age { background: #FFE0B2; color: #E65100; font-weight: 600; }
+
+/* ===== 教具清单 ===== */
+.tools-category { margin-bottom: 20px; }
+
+.tools-category-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tools-category-icon { font-size: 20px; }
+.tools-category-name { font-size: 15px; font-weight: 600; }
+
+.tools-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+
+.tool-card {
+  background: white;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  box-shadow: var(--shadow);
+  border-left: 3px solid var(--primary);
+}
+
+.tool-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.tool-use { font-size: 12px; color: #555; margin-bottom: 6px; }
+.tool-themes { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+
+.tool-theme-tag {
+  font-size: 10px;
+  background: #f5f0eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #666;
+}
+
+.tool-cost { font-size: 12px; color: #4CAF50; font-weight: 600; }
+.tool-how { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+
+/* ===== 探索空间 ===== */
+.zones-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+.zone-card { background: white; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+
+.zone-header { display: flex; gap: 12px; margin-bottom: 10px; }
+.zone-icon { font-size: 28px; }
+.zone-name { font-size: 15px; font-weight: 600; }
+.zone-desc { font-size: 12px; color: var(--text-light); }
+
+.zone-setup { list-style: none; }
+.zone-setup li {
+  font-size: 12px;
+  color: #555;
+  padding: 4px 0 4px 16px;
+  position: relative;
+}
+
+.zone-setup li::before { content: '✓'; position: absolute; left: 0; color: #66BB6A; }
+
+/* ===== 养育原则 ===== */
+.principles-list { display: flex; flex-direction: column; gap: 12px; }
+
+.principle-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  border-top: 4px solid var(--primary);
+}
+
+.principle-icon-big { font-size: 36px; flex-shrink: 0; }
+.principle-title-big { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.principle-text { font-size: 13px; color: #555; line-height: 1.6; }
+
+/* ===== 响应式 ===== */
+@media (min-width: 480px) {
+  .activity-grid { grid-template-columns: 1fr 1fr; }
+  .tools-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 380px) {
+  .stats-row { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+  <!-- 顶部标题栏 -->
+  <div class="app-header">
+    <h1>👶 宝宝早教工作台</h1>
+    <div class="subtitle">11月龄 · 五大模块 · 每日自动更新</div>
+  </div>
+
+  <!-- 页面：今日早教台 -->
+  <div class="page active" id="page-today">
+    <div id="todayContent"></div>
+  </div>
+
+  <!-- 页面：活动库 -->
+  <div class="page" id="page-activities">
+    <div id="activitiesContent"></div>
+  </div>
+
+  <!-- 页面：发育观察 -->
+  <div class="page" id="page-dev">
+    <div id="devContent"></div>
+  </div>
+
+  <!-- 页面：教具清单 -->
+  <div class="page" id="page-tools">
+    <div id="toolsContent"></div>
+  </div>
+
+  <!-- 页面：养育原则 -->
+  <div class="page" id="page-principles">
+    <div id="principlesContent"></div>
+  </div>
+
+  <!-- 底部导航 -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" data-page="page-today" onclick="showPage('page-today')">
+      <span class="nav-icon">📋</span>今日
+    </div>
+    <div class="nav-item" data-page="page-activities" onclick="showPage('page-activities')">
+      <span class="nav-icon">🎯</span>活动库
+    </div>
+    <div class="nav-item" data-page="page-dev" onclick="showPage('page-dev')">
+      <span class="nav-icon">📊</span>发育
+    </div>
+    <div class="nav-item" data-page="page-tools" onclick="showPage('page-tools')">
+      <span class="nav-icon">🧰</span>教具
+    </div>
+    <div class="nav-item" data-page="page-principles" onclick="showPage('page-principles')">
+      <span class="nav-icon">🌟</span>原则
+    </div>
+  </nav>
+
+  <script>
+/* ===== 早教工作台核心逻辑 ===== */
+
+const App = {
+  data: {},
+  state: {
+    currentDate: null,
+    currentThemeId: null,
+    completedTasks: {},  // { "2026-08-18": { "fm-c1": true, ... } }
+    devRecords: {},      // { "gm1": { "date": "2026-08-18", "note": "" }, ... }
+    devHistory: [],      // [{ date, age, summary }]
+  },
+
+  // ===== 初始化 =====
+  async init() {
+    await this.loadData();
+    this.loadState();
+    this.setStateDate();
+    this.renderAll();
+  },
+
+  loadData() {
+    this.data = {
+      tasks: {
+  "meta": {
+    "targetAge": "11个月",
+    "version": "1.0",
+    "createdAt": "2026-08-18",
+    "note": "针对11月龄宝宝（可自由走路奔跑、可双脚跳）设计的早教任务池，每个模块按周主题循环抽取每日任务"
+  },
+  "weeklyThemes": [
+    { "id": "color", "name": "颜色认知周", "color": "#FF6B9D", "icon": "🎨", "desc": "认识红黄蓝绿橙紫粉棕，从身边实物中提取颜色概念" },
+    { "id": "fruit", "name": "水果认知周", "color": "#7BC67E", "icon": "🍎", "desc": "认识常见水果，摸、闻、尝、剥，建立食物与名称对应" },
+    { "id": "animal", "name": "动物认知周", "color": "#F4A261", "icon": "🐯", "desc": "认识常见动物，模仿叫声、动作，建立动物与声音对应" },
+    { "id": "body", "name": "五官身体周", "color": "#6BB6E8", "icon": "👀", "desc": "认识五官和身体部位，指认、命名、游戏互动" },
+    { "id": "daily", "name": "日常物品周", "color": "#B987E8", "icon": "🥄", "desc": "认识餐具、衣物、家具等日常用品，建立物品功能认知" },
+    { "id": "housework", "name": "家务动手周", "color": "#E8B14A", "icon": "🧹", "desc": "参与简单家务，培养秩序感、责任感和动手能力" },
+    { "id": "nature", "name": "自然探索周", "color": "#5BC0A0", "icon": "🌿", "desc": "接触自然元素，感受冷热干湿、观察植物、户外探索" }
+  ],
+  "modules": {
+    "fine_motor": {
+      "name": "精细动作 & 专注力训练",
+      "icon": "✋",
+      "color": "#FF8A65",
+      "goal": "手眼协调、耐心、手部精细控制、秩序感、自主学习力",
+      "principle": "宝宝自主操作、不打断、不催促、保护超长专注状态",
+      "tasksByTheme": {
+        "color": [
+          { "id": "fm-c1", "title": "彩色夹子分类", "desc": "准备红黄蓝三种颜色夹子，让宝宝从碗里取出按颜色分放到三个小碗里", "materials": ["彩色夹子", "小碗×3", "大碗×1"], "duration": "10-15分钟" },
+          { "id": "fm-c2", "title": "彩色绒球转移", "desc": "用拇指食指捏取彩色毛绒球，从一只碗转移到另一只碗", "materials": ["彩色绒球", "碗×2"], "duration": "8-12分钟" },
+          { "id": "fm-c3", "title": "彩色积木配对", "desc": "把彩色积木按颜色放入对应颜色的盒子里", "materials": ["彩色积木", "彩色盒子"], "duration": "10分钟" },
+          { "id": "fm-c4", "title": "彩色袜子配对", "desc": "把彩色袜子按颜色两两配对", "materials": ["彩色袜子若干双"], "duration": "8-10分钟" }
+        ],
+        "fruit": [
+          { "id": "fm-f1", "title": "剥香蕉皮", "desc": "把香蕉顶部掰开一个小口，让宝宝自己剥皮", "materials": ["香蕉1根"], "duration": "5-10分钟" },
+          { "id": "fm-f2", "title": "剥橘子", "desc": "橘子划开一个小口，让宝宝自己剥皮，剥完分瓣", "materials": ["橘子1个"], "duration": "8-15分钟" },
+          { "id": "fm-f3", "title": "捡葡萄粒", "desc": "把葡萄从碗里一颗颗捡到盘子里", "materials": ["葡萄若干", "碗", "盘子"], "duration": "5-10分钟" },
+          { "id": "fm-f4", "title": "水果分类", "desc": "把两种水果（如葡萄和蓝莓）分开摆放到两个碗里", "materials": ["葡萄", "蓝莓", "碗×2"], "duration": "8-12分钟" }
+        ],
+        "animal": [
+          { "id": "fm-a1", "title": "动物卡片收纳", "desc": "把动物卡片一张张放进盒子里，再一张张取出", "materials": ["动物卡片", "盒子"], "duration": "8-12分钟" },
+          { "id": "fm-a2", "title": "动物小模型分类", "desc": "把动物模型按大小分成两组", "materials": ["动物模型若干"], "duration": "8分钟" },
+          { "id": "fm-a3", "title": "动物卡片配对", "desc": "把两张相同的动物卡片配对", "materials": ["动物卡片对"], "duration": "8-12分钟" }
+        ],
+        "body": [
+          { "id": "fm-b1", "title": "贴五官贴纸", "desc": "在纸上画好脸轮廓，让宝宝把五官贴纸贴上去（位置不必准确）", "materials": ["纸", "五官贴纸"], "duration": "8-12分钟" },
+          { "id": "fm-b2", "title": "拉拉链/扣大扣子", "desc": "让宝宝练习拉拉链或扣大扣子", "materials": ["带拉链的衣物", "大扣子衣物"], "duration": "8-10分钟" },
+          { "id": "fm-b3", "title": "穿袜子", "desc": "让宝宝自己往脚上套袜子", "materials": ["宽松袜子"], "duration": "5-10分钟" }
+        ],
+        "daily": [
+          { "id": "fm-d1", "title": "勺子舀豆子", "desc": "用勺子把豆子从一只碗舀到另一只碗", "materials": ["大勺子", "大红豆", "碗×2"], "duration": "8-15分钟" },
+          { "id": "fm-d2", "title": "拧瓶盖", "desc": "准备几个大小不同的瓶子，让宝宝拧上瓶盖", "materials": ["带盖瓶子×3"], "duration": "8-12分钟" },
+          { "id": "fm-d3", "title": "叠杯子", "desc": "把塑料杯子一个套一个，再一个个取出来", "materials": ["塑料杯×5"], "duration": "8-10分钟" },
+          { "id": "fm-d4", "title": "钥匙开锁", "desc": "用大钥匙开锁（简化版，让宝宝体验插入和转动）", "materials": ["大挂锁+钥匙"], "duration": "5-10分钟" }
+        ],
+        "housework": [
+          { "id": "fm-h1", "title": "擦桌子", "desc": "给宝宝一块小抹布，让他模仿擦桌子", "materials": ["小抹布"], "duration": "5-10分钟" },
+          { "id": "fm-h2", "title": "收纳玩具", "desc": "把玩具一件件放进收纳筐", "materials": ["玩具", "收纳筐"], "duration": "8-12分钟" },
+          { "id": "fm-h3", "title": "叠衣服", "desc": "让宝宝帮忙把叠好的衣服抱到指定位置", "materials": ["衣物"], "duration": "5-8分钟" },
+          { "id": "fm-h4", "title": "扔垃圾", "desc": "把小纸团扔进垃圾桶", "materials": ["纸团", "垃圾桶"], "duration": "5分钟" }
+        ],
+        "nature": [
+          { "id": "fm-n1", "title": "捡树叶", "desc": "在户外捡不同形状的树叶，放进小篮子", "materials": ["小篮子"], "duration": "10-15分钟" },
+          { "id": "fm-n2", "title": "玩沙子", "desc": "用小铲子把沙子从一处转移到另一处", "materials": ["小铲子", "容器"], "duration": "10-20分钟" },
+          { "id": "fm-n3", "title": "撕树叶", "desc": "把干树叶一片片撕碎", "materials": ["干树叶"], "duration": "5-10分钟" },
+          { "id": "fm-n4", "title": "石头分类", "desc": "把捡来的石头按大小分两堆", "materials": ["小石头若干"], "duration": "8分钟" }
+        ]
+      }
+    },
+    "language": {
+      "name": "语言启蒙",
+      "icon": "💬",
+      "color": "#5C9FEC",
+      "goal": "听懂指令、模仿发音、扩充词汇、短句理解、表达欲提升",
+      "principle": "全程生活化对话，不背诵、不跟读课件",
+      "tasksByTheme": {
+        "color": [
+          { "id": "lg-c1", "title": "颜色命名对话", "desc": "宝宝玩东西时自然说：「这是红色的球」「黄色的杯子」", "materials": [], "duration": "贯穿日常" },
+          { "id": "lg-c2", "title": "找颜色游戏", "desc": "「宝宝，把红色的拿给妈妈」「黄色的在哪里？」", "materials": ["彩色物品"], "duration": "5-8分钟" },
+          { "id": "lg-c3", "title": "颜色叠词", "desc": "「红红的、黄黄的、蓝蓝的」自然口语化输入", "materials": [], "duration": "贯穿日常" }
+        ],
+        "fruit": [
+          { "id": "lg-f1", "title": "水果命名", "desc": "吃水果时说：「这是苹果」「甜甜的香蕉」「酸酸的橘子」", "materials": ["水果"], "duration": "餐间" },
+          { "id": "lg-f2", "title": "水果指令", "desc": "「把苹果拿给妈妈」「想吃香蕉吗？」", "materials": ["水果"], "duration": "5分钟" },
+          { "id": "lg-f3", "title": "水果形容词", "desc": "「甜甜的、酸酸的、软软的、硬硬的」", "materials": [], "duration": "贯穿日常" }
+        ],
+        "animal": [
+          { "id": "lg-a1", "title": "动物叫声模仿", "desc": "「小猫喵喵喵」「小狗汪汪汪」「小鸭嘎嘎嘎」", "materials": [], "duration": "5-8分钟" },
+          { "id": "lg-a2", "title": "动物动作模仿", "desc": "「小兔跳跳跳」「小鸟飞飞飞」边说边做", "materials": [], "duration": "5分钟" },
+          { "id": "lg-a3", "title": "动物命名", "desc": "看书或卡片时指认：「这是大象」「这是小鱼」", "materials": ["绘本/卡片"], "duration": "5分钟" }
+        ],
+        "body": [
+          { "id": "lg-b1", "title": "指五官", "desc": "「宝宝的鼻子在哪里？」「妈妈的眼睛在哪里？」", "materials": [], "duration": "3-5分钟" },
+          { "id": "lg-b2", "title": "身体部位命名", "desc": "洗澡时说：「洗手手」「洗脚脚」「洗肚肚」", "materials": [], "duration": "洗澡时" },
+          { "id": "lg-b3", "title": "动作指令", "desc": "「点点头」「摆摆手」「拍拍手」「跺跺脚」", "materials": [], "duration": "3-5分钟" }
+        ],
+        "daily": [
+          { "id": "lg-d1", "title": "物品命名", "desc": "「这是勺子」「这是碗」「这是鞋子」", "materials": ["日常物品"], "duration": "贯穿日常" },
+          { "id": "lg-d2", "title": "功能指令", "desc": "「用勺子吃饭」「把鞋子穿上」", "materials": [], "duration": "日常场景" },
+          { "id": "lg-d3", "title": "归属表达", "desc": "「宝宝的碗」「妈妈的杯子」「爸爸的鞋」", "materials": [], "duration": "贯穿日常" }
+        ],
+        "housework": [
+          { "id": "lg-h1", "title": "家务动词", "desc": "「擦一擦」「收起来」「放进去」「拿出来」", "materials": [], "duration": "贯穿日常" },
+          { "id": "lg-h2", "title": "指令执行", "desc": "「把玩具放进筐里」「把衣服拿过来」", "materials": [], "duration": "5分钟" },
+          { "id": "lg-h3", "title": "夸奖表达", "desc": "「宝宝帮妈妈做事了，真棒！」「谢谢宝宝」", "materials": [], "duration": "贯穿日常" }
+        ],
+        "nature": [
+          { "id": "lg-n1", "title": "自然感受词", "desc": "「风呼呼的」「树叶沙沙响」「太阳暖暖的」", "materials": [], "duration": "户外" },
+          { "id": "lg-n2", "title": "自然命名", "desc": "「这是树」「这是花」「这是草」「这是石头」", "materials": [], "duration": "户外" },
+          { "id": "lg-n3", "title": "感官词", "desc": "「凉凉的水」「暖暖的太阳」「软软的泥」", "materials": [], "duration": "户外" }
+        ]
+      }
+    },
+    "cognition": {
+      "name": "基础认知启蒙",
+      "icon": "🧠",
+      "color": "#9CCC65",
+      "goal": "建立颜色、大小、多少、高低、冷热、干湿等基础概念",
+      "principle": "实物指认、场景教学、游戏输入，无书面化教学",
+      "tasksByTheme": {
+        "color": [
+          { "id": "cg-c1", "title": "认识红色", "desc": "收集家中红色物品（苹果、红球、红衣服），让宝宝摸、看、感受", "materials": ["红色物品若干"], "duration": "5-8分钟" },
+          { "id": "cg-c2", "title": "颜色找朋友", "desc": "拿一个红色物品，让宝宝在屋里找另一个红色的", "materials": ["红色物品"], "duration": "5-10分钟" },
+          { "id": "cg-c3", "title": "颜色分类", "desc": "把红黄两种物品分成两堆", "materials": ["红黄物品各2-3个"], "duration": "5-8分钟" }
+        ],
+        "fruit": [
+          { "id": "cg-f1", "title": "水果大小对比", "desc": "拿大苹果和小葡萄放一起，说「大的」「小的」", "materials": ["大小不同的水果"], "duration": "3-5分钟" },
+          { "id": "cg-f2", "title": "水果多少", "desc": "一碗多葡萄、一碗少葡萄，说「多的」「少的」", "materials": ["葡萄", "碗×2"], "duration": "3分钟" },
+          { "id": "cg-f3", "title": "水果里外", "desc": "橘子剥皮前说「橘子在皮里面」，剥开后说「橘子出来了」", "materials": ["橘子"], "duration": "5分钟" }
+        ],
+        "animal": [
+          { "id": "cg-a1", "title": "动物大小", "desc": "大象和小鱼比大小，「大象大大的」「小鱼小小的」", "materials": ["动物模型/卡片"], "duration": "3-5分钟" },
+          { "id": "cg-a2", "title": "动物多少", "desc": "一堆3只、一堆1只，说「多的」「少的」", "materials": ["动物卡片"], "duration": "3分钟" },
+          { "id": "cg-a3", "title": "动物分类", "desc": "把会飞的、会游的分开", "materials": ["动物卡片"], "duration": "5分钟" }
+        ],
+        "body": [
+          { "id": "cg-b1", "title": "大小对比", "desc": "妈妈的手和宝宝的手比，「妈妈的大」「宝宝的小」", "materials": [], "duration": "2-3分钟" },
+          { "id": "cg-b2", "title": "高低对比", "desc": "「宝宝站高了」「蹲低了」", "materials": [], "duration": "3分钟" },
+          { "id": "cg-b3", "title": "里外", "desc": "「手在袖子里」「手出来了」", "materials": ["衣物"], "duration": "3分钟" }
+        ],
+        "daily": [
+          { "id": "cg-d1", "title": "大小对比", "desc": "大碗小碗、大勺小勺对比", "materials": ["大小餐具"], "duration": "3-5分钟" },
+          { "id": "cg-d2", "title": "多少", "desc": "一碗多豆子、一碗少豆子", "materials": ["豆子", "碗×2"], "duration": "3分钟" },
+          { "id": "cg-d3", "title": "冷热", "desc": "摸温水「暖暖的」、摸凉水「凉凉的」", "materials": ["温水", "凉水"], "duration": "3分钟" }
+        ],
+        "housework": [
+          { "id": "cg-h1", "title": "干湿", "desc": "擦桌子时「干的抹布」「湿的抹布」", "materials": ["抹布×2"], "duration": "3分钟" },
+          { "id": "cg-h2", "title": "里外", "desc": "「玩具放进筐里」「玩具拿出来」", "materials": ["玩具", "筐"], "duration": "3-5分钟" },
+          { "id": "cg-h3", "title": "多少", "desc": "「很多衣服」「一件衣服」", "materials": ["衣物"], "duration": "2分钟" }
+        ],
+        "nature": [
+          { "id": "cg-n1", "title": "冷热", "desc": "晒太阳「暖暖的」、摸凉水「凉凉的」", "materials": [], "duration": "户外" },
+          { "id": "cg-n2", "title": "干湿", "desc": "干树叶「干干的」、湿泥土「湿湿的」", "materials": ["树叶", "泥土"], "duration": "户外" },
+          { "id": "cg-n3", "title": "大小", "desc": "大石头小石头对比", "materials": ["石头"], "duration": "3分钟" },
+          { "id": "cg-n4", "title": "多少", "desc": "一堆多树叶、一根少树叶", "materials": ["树叶"], "duration": "2分钟" }
+        ]
+      }
+    },
+    "english": {
+      "name": "英文启蒙",
+      "icon": "🔤",
+      "color": "#AB47BC",
+      "goal": "8大基础颜色、简单日常单词、超短句磨耳朵",
+      "principle": "只磨耳朵、建立画面对应，不认读、不拼写、无压力",
+      "tasksByTheme": {
+        "color": [
+          { "id": "en-c1", "title": "Red / Blue / Yellow", "desc": "指着红色说「Red」，蓝色「Blue」，黄色「Yellow」，每个重复3-5次", "materials": ["彩色物品"], "duration": "2-3分钟" },
+          { "id": "en-c2", "title": "8色磨耳朵", "desc": "Red, Blue, Yellow, Green, Orange, Purple, Pink, Brown 依次指物说", "materials": ["8色物品"], "duration": "3-5分钟" },
+          { "id": "en-c3", "title": "颜色+物品短句", "desc": "「Red apple」「Blue ball」「Yellow banana」", "materials": ["彩色物品"], "duration": "2-3分钟" }
+        ],
+        "fruit": [
+          { "id": "en-f1", "title": "Apple / Banana", "desc": "吃苹果说「Apple」，吃香蕉说「Banana」", "materials": ["水果"], "duration": "餐间" },
+          { "id": "en-f2", "title": "水果短句", "desc": "「Yummy apple」「Sweet banana」", "materials": ["水果"], "duration": "2分钟" },
+          { "id": "en-f3", "title": "水果动作", "desc": "「Eat apple」「Peel banana」", "materials": ["水果"], "duration": "2-3分钟" }
+        ],
+        "animal": [
+          { "id": "en-a1", "title": "Cat / Dog / Duck", "desc": "指动物卡片说英文名", "materials": ["动物卡片"], "duration": "2-3分钟" },
+          { "id": "en-a2", "title": "动物叫声", "desc": "「Meow meow」「Woof woof」「Quack quack」", "materials": [], "duration": "2分钟" },
+          { "id": "en-a3", "title": "动物短句", "desc": "「Big elephant」「Small fish」", "materials": ["动物卡片"], "duration": "2分钟" }
+        ],
+        "body": [
+          { "id": "en-b1", "title": "Eye / Nose / Mouth", "desc": "指五官说英文名", "materials": [], "duration": "2-3分钟" },
+          { "id": "en-b2", "title": "身体短句", "desc": "「Touch your nose」「Wash hands」", "materials": [], "duration": "2分钟" },
+          { "id": "en-b3", "title": "动作词", "desc": "「Clap hands」「Stomp feet」「Nod head」", "materials": [], "duration": "2-3分钟" }
+        ],
+        "daily": [
+          { "id": "en-d1", "title": "Cup / Bowl / Spoon", "desc": "指餐具说英文名", "materials": ["餐具"], "duration": "2-3分钟" },
+          { "id": "en-d2", "title": "日常短句", "desc": "「Drink water」「Eat rice」", "materials": [], "duration": "餐间" },
+          { "id": "en-d3", "title": "物品词", "desc": "「Shoes」「Hat」「Ball」", "materials": ["日常物品"], "duration": "2分钟" }
+        ],
+        "housework": [
+          { "id": "en-h1", "title": "Clean / Wash", "desc": "擦桌子说「Clean」，洗手说「Wash」", "materials": [], "duration": "日常" },
+          { "id": "en-h2", "title": "动作短句", "desc": "「Put away」「Clean up」", "materials": [], "duration": "2分钟" },
+          { "id": "en-h3", "title": "感谢词", "desc": "「Thank you」「Good job」", "materials": [], "duration": "日常" }
+        ],
+        "nature": [
+          { "id": "en-n1", "title": "Tree / Flower / Grass", "desc": "户外指认说英文名", "materials": [], "duration": "户外" },
+          { "id": "en-n2", "title": "自然短句", "desc": "「Green tree」「Yellow flower」", "materials": [], "duration": "户外" },
+          { "id": "en-n3", "title": "天气词", "desc": "「Sunny day」「Windy」", "materials": [], "duration": "户外" }
+        ]
+      }
+    },
+    "gross_motor": {
+      "name": "大运动 + 感统发育",
+      "icon": "🏃",
+      "color": "#FF7043",
+      "goal": "促进肢体协调、本体感、胆量、专注力稳定",
+      "principle": "每日自由运动、平衡、弯腰、攀爬、抛接、行走练习",
+      "tasksByTheme": {
+        "color": [
+          { "id": "gm-c1", "title": "追彩色球", "desc": "把彩色球滚出去，让宝宝追着跑或走过去捡", "materials": ["彩色球"], "duration": "10-15分钟" },
+          { "id": "gm-c2", "title": "彩色障碍走", "desc": "地上摆彩色靠垫，让宝宝绕着走或跨过去", "materials": ["靠垫"], "duration": "10分钟" },
+          { "id": "gm-c3", "title": "抛彩色球", "desc": "让宝宝把彩色球抛进筐里", "materials": ["彩色球", "筐"], "duration": "8-10分钟" }
+        ],
+        "fruit": [
+          { "id": "gm-f1", "title": "水果搬运", "desc": "让宝宝把水果从一处搬到另一处（一次一个）", "materials": ["水果", "两个位置"], "duration": "8-12分钟" },
+          { "id": "gm-f2", "title": "蹲起捡水果", "desc": "把水果放在低处，让宝宝蹲下捡起再站起来", "materials": ["水果"], "duration": "8分钟" },
+          { "id": "gm-f3", "title": "水果抛接", "desc": "把软水果（如橘子）轻轻抛给宝宝尝试接住", "materials": ["橘子"], "duration": "5-8分钟" }
+        ],
+        "animal": [
+          { "id": "gm-a1", "title": "模仿动物走", "desc": "「像小兔跳跳」「像小鸭摇摇摆摆走」", "materials": [], "duration": "5-10分钟" },
+          { "id": "gm-a2", "title": "动物追逐", "desc": "大人模仿动物跑，宝宝追", "materials": [], "duration": "8-10分钟" },
+          { "id": "gm-a3", "title": "动物爬行", "desc": "「像小熊爬爬」「像小乌龟慢慢爬」", "materials": [], "duration": "5-8分钟" }
+        ],
+        "body": [
+          { "id": "gm-b1", "title": "全身运动", "desc": "「点点头、转转腰、踢踢腿、跳一跳」", "materials": [], "duration": "5分钟" },
+          { "id": "gm-b2", "title": "平衡走", "desc": "在地上贴一条线，让宝宝沿线走", "materials": ["胶带"], "duration": "8-10分钟" },
+          { "id": "gm-b3", "title": "攀爬", "desc": "在安全的沙发/垫子上攀爬", "materials": ["沙发/垫子"], "duration": "10分钟" }
+        ],
+        "daily": [
+          { "id": "gm-d1", "title": "搬运物品", "desc": "让宝宝帮忙把物品从一处搬到另一处", "materials": ["轻便物品"], "duration": "8-10分钟" },
+          { "id": "gm-d2", "title": "上下楼梯", "desc": "在安全的楼梯处练习爬楼梯（大人保护）", "materials": [], "duration": "10分钟" },
+          { "id": "gm-d3", "title": "抛接球", "desc": "和宝宝面对面坐，把球滚/抛给对方", "materials": ["软球"], "duration": "8-10分钟" }
+        ],
+        "housework": [
+          { "id": "gm-h1", "title": "蹲下收纳", "desc": "蹲下把玩具放进低矮的收纳筐", "materials": ["玩具", "收纳筐"], "duration": "8-12分钟" },
+          { "id": "gm-h2", "title": "推物行走", "desc": "让宝宝推一个小箱子或小椅子走", "materials": ["小箱子"], "duration": "8-10分钟" },
+          { "id": "gm-h3", "title": "弯腰擦地", "desc": "模仿弯腰擦地动作", "materials": ["抹布"], "duration": "5分钟" }
+        ],
+        "nature": [
+          { "id": "gm-n1", "title": "户外奔跑", "desc": "在安全的户外自由走、跑", "materials": [], "duration": "20-30分钟" },
+          { "id": "gm-n2", "title": "蹲起捡树叶", "desc": "蹲下捡树叶再站起来", "materials": [], "duration": "10分钟" },
+          { "id": "gm-n3", "title": "攀爬草地斜坡", "desc": "在草地缓坡上攀爬", "materials": [], "duration": "10-15分钟" },
+          { "id": "gm-n4", "title": "跨步走", "desc": "跨过地上的小石头或树枝", "materials": [], "duration": "8分钟" }
+        ]
+      }
+    }
+  }
+}
+,
+      activities: {
+  "meta": {
+    "desc": "活动库 - 按发展领域和主题双筛选，全部使用真实生活物品"
+  },
+  "domains": [
+    { "id": "fine_motor", "name": "精细动作", "icon": "✋" },
+    { "id": "gross_motor", "name": "大运动", "icon": "🏃" },
+    { "id": "language", "name": "语言认知", "icon": "💬" },
+    { "id": "sensory", "name": "感官探索", "icon": "👁️" },
+    { "id": "life_skill", "name": "生活技能", "icon": "🥄" },
+    { "id": "art", "name": "艺术创意", "icon": "🎨" }
+  ],
+  "themes": [
+    { "id": "color", "name": "颜色" },
+    { "id": "fruit", "name": "水果" },
+    { "id": "animal", "name": "动物" },
+    { "id": "body", "name": "五官" },
+    { "id": "daily", "name": "日用物品" },
+    { "id": "housework", "name": "家务" },
+    { "id": "nature", "name": "自然" }
+  ],
+  "activities": [
+    { "id": "act001", "title": "剥香蕉皮", "domain": "fine_motor", "theme": "fruit", "materials": ["香蕉"], "desc": "掰开小口让宝宝自己剥，锻炼手指力量和分化", "age": "10-18月" },
+    { "id": "act002", "title": "剥橘子", "domain": "fine_motor", "theme": "fruit", "materials": ["橘子"], "desc": "划开小口让宝宝剥皮，剥完分瓣", "age": "10-18月" },
+    { "id": "act003", "title": "捡葡萄粒", "domain": "fine_motor", "theme": "fruit", "materials": ["葡萄", "碗", "盘子"], "desc": "一颗颗捡取转移，练习捏取", "age": "10-15月" },
+    { "id": "act004", "title": "勺子舀豆子", "domain": "fine_motor", "theme": "daily", "materials": ["大勺子", "大红豆", "碗×2"], "desc": "用勺子舀豆子转移，练习手眼协调", "age": "11-18月" },
+    { "id": "act005", "title": "拧瓶盖", "domain": "fine_motor", "theme": "daily", "materials": ["带盖瓶子×3"], "desc": "不同大小瓶盖拧上拧下", "age": "11-18月" },
+    { "id": "act006", "title": "彩色绒球转移", "domain": "fine_motor", "theme": "color", "materials": ["彩色绒球", "碗×2"], "desc": "捏取绒球转移，练习三指捏", "age": "10-15月" },
+    { "id": "act007", "title": "叠塑料杯", "domain": "fine_motor", "theme": "daily", "materials": ["塑料杯×5"], "desc": "杯子套叠和取出", "age": "10-16月" },
+    { "id": "act008", "title": "撕贴纸", "domain": "fine_motor", "theme": "color", "materials": ["贴纸", "纸"], "desc": "撕下贴纸贴到纸上", "age": "11-18月" },
+    { "id": "act009", "title": "撕树叶", "domain": "fine_motor", "theme": "nature", "materials": ["干树叶"], "desc": "把干树叶一片片撕碎", "age": "10-15月" },
+    { "id": "act010", "title": "彩色夹子分类", "domain": "fine_motor", "theme": "color", "materials": ["彩色夹子", "碗×3"], "desc": "按颜色分放到不同碗里", "age": "12-18月" },
+    { "id": "act011", "title": "彩色袜子配对", "domain": "fine_motor", "theme": "color", "materials": ["彩色袜子"], "desc": "按颜色两两配对", "age": "12-18月" },
+    { "id": "act012", "title": "拉拉链", "domain": "fine_motor", "theme": "body", "materials": ["带拉链衣物"], "desc": "练习拉拉链", "age": "12-20月" },
+    { "id": "act013", "title": "贴五官贴纸", "domain": "fine_motor", "theme": "body", "materials": ["纸", "五官贴纸"], "desc": "在脸轮廓上贴五官", "age": "11-18月" },
+    { "id": "act014", "title": "钥匙开锁", "domain": "fine_motor", "theme": "daily", "materials": ["大挂锁", "钥匙"], "desc": "插入钥匙并转动", "age": "12-20月" },
+    { "id": "act015", "title": "穿大孔珠", "domain": "fine_motor", "theme": "color", "materials": ["大孔木珠", "鞋带"], "desc": "用鞋带穿大孔珠子", "age": "14-24月" },
+
+    { "id": "act016", "title": "追球跑", "domain": "gross_motor", "theme": "color", "materials": ["球"], "desc": "把球滚出去让宝宝追", "age": "11-18月" },
+    { "id": "act017", "title": "抛球进筐", "domain": "gross_motor", "theme": "color", "materials": ["球", "筐"], "desc": "把球抛进筐里", "age": "12-18月" },
+    { "id": "act018", "title": "蹲起捡物", "domain": "gross_motor", "theme": "fruit", "materials": ["水果"], "desc": "蹲下捡起再站起", "age": "11-16月" },
+    { "id": "act019", "title": "模仿动物走", "domain": "gross_motor", "theme": "animal", "materials": [], "desc": "模仿小兔跳、小鸭走", "age": "12-20月" },
+    { "id": "act020", "title": "平衡走线", "domain": "gross_motor", "theme": "body", "materials": ["胶带"], "desc": "沿地上胶带线走", "age": "14-24月" },
+    { "id": "act021", "title": "攀爬沙发", "domain": "gross_motor", "theme": "body", "materials": ["沙发/垫子"], "desc": "安全攀爬", "age": "11-18月" },
+    { "id": "act022", "title": "上下楼梯", "domain": "gross_motor", "theme": "daily", "materials": [], "desc": "大人保护下爬楼梯", "age": "12-24月" },
+    { "id": "act023", "title": "推箱行走", "domain": "gross_motor", "theme": "housework", "materials": ["小箱子"], "desc": "推小箱子走", "age": "11-18月" },
+    { "id": "act024", "title": "户外奔跑", "domain": "gross_motor", "theme": "nature", "materials": [], "desc": "安全户外自由走跑", "age": "12-24月" },
+    { "id": "act025", "title": "跨步走", "domain": "gross_motor", "theme": "nature", "materials": [], "desc": "跨过地上小障碍", "age": "12-18月" },
+    { "id": "act026", "title": "双脚跳", "domain": "gross_motor", "theme": "animal", "materials": [], "desc": "模仿小兔双脚跳", "age": "12-24月" },
+    { "id": "act027", "title": "抛接软球", "domain": "gross_motor", "theme": "daily", "materials": ["软球"], "desc": "面对面滚/抛球", "age": "12-20月" },
+
+    { "id": "act028", "title": "颜色命名对话", "domain": "language", "theme": "color", "materials": [], "desc": "生活中自然命名颜色", "age": "10-18月" },
+    { "id": "act029", "title": "找颜色游戏", "domain": "language", "theme": "color", "materials": ["彩色物品"], "desc": "「把红色的拿给妈妈」", "age": "12-18月" },
+    { "id": "act030", "title": "水果命名", "domain": "language", "theme": "fruit", "materials": ["水果"], "desc": "吃水果时命名", "age": "10-18月" },
+    { "id": "act031", "title": "动物叫声", "domain": "language", "theme": "animal", "materials": [], "desc": "喵喵、汪汪、嘎嘎", "age": "10-18月" },
+    { "id": "act032", "title": "指五官", "domain": "language", "theme": "body", "materials": [], "desc": "「鼻子在哪里？」", "age": "11-18月" },
+    { "id": "act033", "title": "动作指令", "domain": "language", "theme": "body", "materials": [], "desc": "点点头、拍拍手、跺跺脚", "age": "11-18月" },
+    { "id": "act034", "title": "物品命名", "domain": "language", "theme": "daily", "materials": ["日常物品"], "desc": "勺子、碗、鞋子", "age": "10-18月" },
+    { "id": "act035", "title": "归属表达", "domain": "language", "theme": "daily", "materials": [], "desc": "宝宝的碗、妈妈的杯子", "age": "12-18月" },
+    { "id": "act036", "title": "家务动词", "domain": "language", "theme": "housework", "materials": [], "desc": "擦一擦、收起来、放进去", "age": "12-20月" },
+    { "id": "act037", "title": "自然感受词", "domain": "language", "theme": "nature", "materials": [], "desc": "风呼呼、树叶沙沙", "age": "12-20月" },
+    { "id": "act038", "title": "指令执行", "domain": "language", "theme": "housework", "materials": [], "desc": "「把玩具放进筐里」", "age": "12-18月" },
+
+    { "id": "act039", "title": "触摸冷热水", "domain": "sensory", "theme": "nature", "materials": ["温水", "凉水"], "desc": "感受冷热（安全温度）", "age": "10-18月" },
+    { "id": "act040", "title": "干湿触摸", "domain": "sensory", "theme": "housework", "materials": ["干抹布", "湿抹布"], "desc": "感受干和湿", "age": "10-18月" },
+    { "id": "act041", "title": "玩沙子", "domain": "sensory", "theme": "nature", "materials": ["沙子", "容器"], "desc": "触摸、转移沙子", "age": "12-24月" },
+    { "id": "act042", "title": "玩水", "domain": "sensory", "theme": "nature", "materials": ["水盆", "杯子"], "desc": "倒水、拍水", "age": "12-24月" },
+    { "id": "act043", "title": "水果触觉", "domain": "sensory", "theme": "fruit", "materials": ["不同质感水果"], "desc": "摸光滑的苹果、粗糙的菠萝", "age": "10-18月" },
+    { "id": "act044", "title": "闻水果", "domain": "sensory", "theme": "fruit", "materials": ["水果"], "desc": "闻不同水果的气味", "age": "10-18月" },
+    { "id": "act045", "title": "听自然声", "domain": "sensory", "theme": "nature", "materials": [], "desc": "听风声、鸟叫、树叶声", "age": "10-24月" },
+    { "id": "act046", "title": "踩不同质感", "domain": "sensory", "theme": "nature", "materials": ["草地", "垫子", "毛巾"], "desc": "光脚踩不同质感表面", "age": "11-18月" },
+
+    { "id": "act047", "title": "自己吃饭", "domain": "life_skill", "theme": "daily", "materials": ["勺子", "碗"], "desc": "用勺子自己吃饭", "age": "12-24月" },
+    { "id": "act048", "title": "自己喝水", "domain": "life_skill", "theme": "daily", "materials": ["学饮杯"], "desc": "自己抱着杯子喝水", "age": "10-18月" },
+    { "id": "act049", "title": "擦桌子", "domain": "life_skill", "theme": "housework", "materials": ["小抹布"], "desc": "模仿擦桌子", "age": "12-20月" },
+    { "id": "act050", "title": "收纳玩具", "domain": "life_skill", "theme": "housework", "materials": ["玩具", "收纳筐"], "desc": "把玩具放进筐", "age": "12-20月" },
+    { "id": "act051", "title": "扔垃圾", "domain": "life_skill", "theme": "housework", "materials": ["纸团", "垃圾桶"], "desc": "把小纸团扔进垃圾桶", "age": "12-18月" },
+    { "id": "act052", "title": "穿袜子", "domain": "life_skill", "theme": "body", "materials": ["宽松袜子"], "desc": "自己往脚上套袜子", "age": "14-24月" },
+    { "id": "act053", "title": "洗手", "domain": "life_skill", "theme": "body", "materials": [], "desc": "模仿搓手洗手", "age": "12-20月" },
+    { "id": "act054", "title": "水果搬运", "domain": "life_skill", "theme": "fruit", "materials": ["水果"], "desc": "帮忙把水果搬到指定位置", "age": "11-18月" },
+
+    { "id": "act055", "title": "手指画", "domain": "art", "theme": "color", "materials": ["食用色素", "纸"], "desc": "用手指蘸颜料画画", "age": "12-24月" },
+    { "id": "act056", "title": "撕纸贴画", "domain": "art", "theme": "color", "materials": ["彩纸", "胶水", "纸"], "desc": "撕彩纸贴到纸上", "age": "12-24月" },
+    { "id": "act057", "title": "拓印画", "domain": "art", "theme": "fruit", "materials": ["水果切块", "颜料", "纸"], "desc": "水果蘸颜料拓印", "age": "14-24月" },
+    { "id": "act058", "title": "树叶贴画", "domain": "art", "theme": "nature", "materials": ["树叶", "胶水", "纸"], "desc": "把树叶贴到纸上", "age": "14-24月" },
+    { "id": "act059", "title": "面团揉捏", "domain": "art", "theme": "daily", "materials": ["面团"], "desc": "揉捏面团做形状", "age": "12-24月" },
+    { "id": "act060", "title": "涂鸦", "domain": "art", "theme": "color", "materials": ["蜡笔", "大纸"], "desc": "在大纸上自由涂鸦", "age": "14-24月" }
+  ]
+}
+,
+      development: {
+  "meta": {
+    "desc": "发育观察记录 - 参考儿保内容，按五大类测评，随月龄变化",
+    "currentAge": "11个月",
+    "note": "宝宝目前可自由走路奔跑，可以双脚跳"
+  },
+  "categories": [
+    {
+      "id": "gross_motor",
+      "name": "大运动",
+      "icon": "🏃",
+      "items": [
+        { "id": "gm1", "text": "独自站稳", "age": "11月" },
+        { "id": "gm2", "text": "独走自如", "age": "11月" },
+        { "id": "gm3", "text": "自由奔跑", "age": "11月" },
+        { "id": "gm4", "text": "双脚跳", "age": "11月" },
+        { "id": "gm5", "text": "蹲下捡物后站稳不起伏", "age": "12月" },
+        { "id": "gm6", "text": "扶栏上下楼梯", "age": "14月" },
+        { "id": "gm7", "text": "倒退走", "age": "15月" },
+        { "id": "gm8", "text": "踢球", "age": "15月" },
+        { "id": "gm9", "text": "跑跑跳跳自如", "age": "18月" }
+      ]
+    },
+    {
+      "id": "fine_motor",
+      "name": "精细动作",
+      "icon": "✋",
+      "items": [
+        { "id": "fm1", "text": "拇指食指捏取小物", "age": "11月" },
+        { "id": "fm2", "text": "把物品放入容器", "age": "11月" },
+        { "id": "fm3", "text": "从容器中取出物品", "age": "11月" },
+        { "id": "fm4", "text": "用食指指物", "age": "11月" },
+        { "id": "fm5", "text": "翻书页（多页一起翻）", "age": "12月" },
+        { "id": "fm6", "text": "握笔涂鸦", "age": "14月" },
+        { "id": "fm7", "text": "叠2-3块积木", "age": "15月" },
+        { "id": "fm8", "text": "穿大孔珠", "age": "18月" }
+      ]
+    },
+    {
+      "id": "language",
+      "name": "语言",
+      "icon": "💬",
+      "items": [
+        { "id": "lg1", "text": "听懂简单指令（如「过来」「给我」）", "age": "11月" },
+        { "id": "lg2", "text": "会叫爸爸/妈妈（有意识）", "age": "11月" },
+        { "id": "lg3", "text": "会说3-5个单字", "age": "12月" },
+        { "id": "lg4", "text": "模仿发音", "age": "11月" },
+        { "id": "lg5", "text": "指认熟悉物品", "age": "12月" },
+        { "id": "lg6", "text": "会说简单短语（2-3字）", "age": "15月" },
+        { "id": "lg7", "text": "能指出身体部位", "age": "15月" },
+        { "id": "lg8", "text": "说10个以上单字", "age": "18月" }
+      ]
+    },
+    {
+      "id": "cognition",
+      "name": "认知",
+      "icon": "🧠",
+      "items": [
+        { "id": "cg1", "text": "认识熟悉的物品", "age": "11月" },
+        { "id": "cg2", "text": "寻找藏起来的物品", "age": "11月" },
+        { "id": "cg3", "text": "理解「里外」", "age": "12月" },
+        { "id": "cg4", "text": "理解「大小」", "age": "14月" },
+        { "id": "cg5", "text": "理解「多少」", "age": "15月" },
+        { "id": "cg6", "text": "认识1-2种颜色", "age": "15月" },
+        { "id": "cg7", "text": "形状配对", "age": "18月" },
+        { "id": "cg8", "text": "认识图片中的物品", "age": "18月" }
+      ]
+    },
+    {
+      "id": "social",
+      "name": "社交情感",
+      "icon": "❤️",
+      "items": [
+        { "id": "sc1", "text": "对镜中影像有反应", "age": "11月" },
+        { "id": "sc2", "text": "会挥手再见", "age": "11月" },
+        { "id": "sc3", "text": "会拍手表示高兴", "age": "11月" },
+        { "id": "sc4", "text": "喜欢模仿大人动作", "age": "12月" },
+        { "id": "sc5", "text": "会表示需求（指、拉手）", "age": "12月" },
+        { "id": "sc6", "text": "对其他小朋友感兴趣", "age": "14月" },
+        { "id": "sc7", "text": "会分享玩具/食物", "age": "15月" },
+        { "id": "sc8", "text": "表现嫉妒/害羞等情绪", "age": "18月" }
+      ]
+    }
+  ]
+}
+,
+      "teaching-tools": {
+  "meta": {
+    "desc": "教具清单 - 全部极简低成本，优先家居物品和真实食材"
+  },
+  "categories": [
+    {
+      "id": "household",
+      "name": "家居物品（随手可得，零成本）",
+      "icon": "🏠",
+      "items": [
+        { "name": "塑料杯/纸杯 ×5", "use": "叠杯、分类、转移、倒水", "themes": ["daily", "color"] },
+        { "name": "大小碗 ×3", "use": "分类、转移、多少对比、舀豆", "themes": ["daily", "color", "fruit"] },
+        { "name": "勺子（大/小）", "use": "舀豆子、吃饭练习", "themes": ["daily", "fruit"] },
+        { "name": "带盖瓶子 ×3", "use": "拧瓶盖、分类", "themes": ["daily"] },
+        { "name": "彩色袜子若干双", "use": "颜色配对、分类", "themes": ["color"] },
+        { "name": "彩色夹子", "use": "颜色分类、捏取练习", "themes": ["color"] },
+        { "name": "靠垫/枕头", "use": "障碍走、攀爬", "themes": ["body"] },
+        { "name": "胶带", "use": "地上贴线平衡走", "themes": ["body"] },
+        { "name": "小抹布", "use": "擦桌子、干湿触摸", "themes": ["housework"] },
+        { "name": "收纳筐", "use": "收纳玩具、抛球进筐", "themes": ["housework", "color"] },
+        { "name": "大挂锁+钥匙", "use": "钥匙开锁练习", "themes": ["daily"] },
+        { "name": "小纸团+垃圾桶", "use": "扔垃圾练习", "themes": ["housework"] },
+        { "name": "带拉链衣物", "use": "拉拉链练习", "themes": ["body"] },
+        { "name": "大纸", "use": "涂鸦、贴画底纸", "themes": ["color"] }
+      ]
+    },
+    {
+      "id": "food",
+      "name": "食物类（真实食材操作）",
+      "icon": "🍎",
+      "items": [
+        { "name": "香蕉", "use": "剥皮、品尝、命名", "themes": ["fruit"] },
+        { "name": "橘子", "use": "剥皮、分瓣、抛接", "themes": ["fruit"] },
+        { "name": "葡萄", "use": "捡取、分类、多少对比", "themes": ["fruit"] },
+        { "name": "蓝莓", "use": "分类、捡取", "themes": ["fruit"] },
+        { "name": "苹果（红/绿）", "use": "颜色认知、大小对比、触摸", "themes": ["fruit", "color"] },
+        { "name": "大红豆/黄豆", "use": "勺子舀、捏取（注意看护）", "themes": ["daily"] },
+        { "name": "面团", "use": "揉捏、塑形", "themes": ["daily", "art"] },
+        { "name": "不同质感水果（菠萝、桃子等）", "use": "触觉对比、闻味", "themes": ["fruit", "sensory"] }
+      ]
+    },
+    {
+      "id": "lowcost",
+      "name": "低成本可选进阶（可买可不买）",
+      "icon": "💰",
+      "items": [
+        { "name": "彩色绒球（毛毛球）", "use": "捏取转移、颜色分类", "themes": ["color"], "cost": "¥5-10" },
+        { "name": "彩色木珠（大孔）+鞋带", "use": "串珠、颜色分类", "themes": ["color"], "cost": "¥10-15" },
+        { "name": "动物卡片/闪卡", "use": "指认、配对、收纳", "themes": ["animal"], "cost": "¥10-20" },
+        { "name": "动物小模型", "use": "分类、大小对比、命名", "themes": ["animal"], "cost": "¥15-30" },
+        { "name": "彩色积木", "use": "颜色分类、叠高、配对", "themes": ["color"], "cost": "¥20-40" },
+        { "name": "五官贴纸", "use": "贴五官游戏", "themes": ["body"], "cost": "¥5-10" },
+        { "name": "食用色素", "use": "手指画、拓印", "themes": ["color", "art"], "cost": "¥10" },
+        { "name": "蜡笔（可水洗）", "use": "涂鸦", "themes": ["art", "color"], "cost": "¥15-25" },
+        { "name": "小铲子+小桶", "use": "玩沙、玩水、户外", "themes": ["nature"], "cost": "¥10-15" },
+        { "name": "小篮子", "use": "捡树叶、收纳", "themes": ["nature"], "cost": "¥5-10" }
+      ]
+    },
+    {
+      "id": "diy",
+      "name": "DIY 教具（自制，零成本）",
+      "icon": "✂️",
+      "items": [
+        { "name": "颜色分类盒", "use": "鞋盒隔成三格，涂不同颜色，让宝宝投对应颜色物品", "themes": ["color"], "how": "鞋盒+彩纸+胶水" },
+        { "name": "感觉瓶", "use": "透明瓶装水+食用色素+亮片，摇晃观察", "themes": ["color", "sensory"], "how": "空瓶+水+色素" },
+        { "name": "触摸板", "use": "纸板上贴砂纸、海绵、布料等不同质感材料", "themes": ["sensory"], "how": "纸板+各种质感材料+胶水" },
+        { "name": "纸筒隧道", "use": "纸巾筒连接成隧道，让宝宝滚球穿过", "themes": ["daily", "color"], "how": "纸巾筒+胶带" },
+        { "name": "蛋盒分类", "use": "蛋盒每个格子放不同小物，让宝宝取放", "themes": ["daily", "fine_motor"], "how": "蛋盒+小物" },
+        { "name": "瓶子沙锤", "use": "空瓶装豆子/米，摇晃听声", "themes": ["sensory"], "how": "空瓶+豆子/米" }
+      ]
+    }
+  ],
+  "zones": [
+    {
+      "id": "motor",
+      "name": "运动区",
+      "icon": "🏃",
+      "desc": "安全开阔的空间，铺地垫，可自由走跑跳爬",
+      "setup": [
+        "客厅或卧室开辟一块2-3㎡开阔区域",
+        "铺EVA拼接地垫（¥30-50）",
+        "放置靠垫/枕头做障碍物",
+        "墙角放一个软球用于抛接",
+        "确保家具尖角有防护"
+      ]
+    },
+    {
+      "id": "operation",
+      "name": "操作区",
+      "icon": "✋",
+      "desc": "小桌椅或地垫上，放置精细动作教具",
+      "setup": [
+        "矮桌椅或在地垫上操作",
+        "准备一个小托盘放当日教具",
+        "碗、勺子、夹子、瓶子等日常物品",
+        "每次只放1-2样，保持专注",
+        "操作完引导宝宝一起收纳"
+      ]
+    },
+    {
+      "id": "sensory",
+      "name": "感官区",
+      "icon": "👁️",
+      "desc": "可触摸、可感受的多感官探索空间",
+      "setup": [
+        "准备一个感官箱（塑料收纳箱）",
+        "可放沙子、水、豆子、大米等",
+        "旁边放小铲子、杯子、漏斗",
+        "不同质感材料（海绵、砂纸、布料）",
+        "在阳台或易清理区域"
+      ]
+    },
+    {
+      "id": "reading",
+      "name": "阅读角",
+      "icon": "📚",
+      "desc": "安静温馨的绘本阅读空间",
+      "setup": [
+        "一个矮书架或书篮（宝宝够得到）",
+        "放3-5本当前主题相关绘本",
+        "一个软坐垫或小沙发",
+        "光线充足的位置",
+        "每周轮换绘本配合主题"
+      ]
+    },
+    {
+      "id": "storage",
+      "name": "收纳区",
+      "icon": "📦",
+      "desc": "教具和玩具分类收纳，宝宝可自主取放",
+      "setup": [
+        "矮收纳柜或收纳筐（宝宝身高可及）",
+        "按领域/主题分类标签",
+        "每次只取1-2样，用完归位",
+        "教宝宝一起收纳",
+        "开放式收纳优于封闭式，便于自主选择"
+      ]
+    }
+  ]
+}
+,
+      principles: {
+  "principles": [
+    { "id": "p1", "icon": "🤫", "title": "不打断原则", "text": "宝宝专注玩耍、操作物品时：全程不打断、不提问、不干预，保护超长专注状态" },
+    { "id": "p2", "icon": "🥄", "title": "实物优先原则", "text": "优先真实食材/实物操作，优于玩具教学" },
+    { "id": "p3", "icon": "🌿", "title": "生活融入原则", "text": "所有早教融入日常，不专门坐教、不上课式学习" },
+    { "id": "p4", "icon": "💡", "title": "极简原则", "text": "所有任务极简、低成本、随手可做、不费妈" },
+    { "id": "p5", "icon": "🌱", "title": "尊重节奏原则", "text": "尊重宝宝节奏，不强迫展示、不攀比、不超前" }
+  ]
+}
+
+    };
+  },
+
+  // ===== 状态管理（localStorage）=====
+  loadState() {
+    try {
+      const saved = localStorage.getItem('elw_state');
+      if (saved) {
+        const s = JSON.parse(saved);
+        this.state.completedTasks = s.completedTasks || {};
+        this.state.devRecords = s.devRecords || {};
+        this.state.devHistory = s.devHistory || [];
+      }
+    } catch(e) { console.error('加载状态失败:', e); }
+  },
+
+  saveState() {
+    try {
+      localStorage.setItem('elw_state', JSON.stringify({
+        completedTasks: this.state.completedTasks,
+        devRecords: this.state.devRecords,
+        devHistory: this.state.devHistory,
+      }));
+    } catch(e) { console.error('保存状态失败:', e); }
+  },
+
+  setStateDate() {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth() + 1).padStart(2, '0');
+    const d = String(today.getDate()).padStart(2, '0');
+    this.state.currentDate = `${y}-${m}-${d}`;
+  },
+
+  // ===== 周主题轮换 =====
+  getThemeIndexForDate(dateStr) {
+    // 以 2026-08-17（周一）为锚点，每周一换主题
+    const anchor = new Date('2026-08-17');
+    const today = new Date(dateStr);
+    const diffDays = Math.floor((today - anchor) / (1000 * 60 * 60 * 24));
+    const weekIndex = Math.floor(diffDays / 7);
+    const themes = this.data.tasks.weeklyThemes;
+    return ((weekIndex % themes.length) + themes.length) % themes.length;
+  },
+
+  getCurrentTheme() {
+    const idx = this.getThemeIndexForDate(this.state.currentDate);
+    return this.data.tasks.weeklyThemes[idx];
+  },
+
+  // ===== 每日任务生成（基于日期+主题，确定性轮换）=====
+  getDailyTasks() {
+    const theme = this.getCurrentTheme();
+    const themeId = theme.id;
+    const modules = this.data.tasks.modules;
+    const dayOfWeek = new Date(this.state.currentDate).getDay(); // 0=周日
+
+    const tasks = {};
+    for (const [moduleKey, module] of Object.entries(modules)) {
+      const themeTasks = module.tasksByTheme[themeId] || [];
+      if (themeTasks.length === 0) continue;
+      // 用星期几+模块名哈希确定性选任务，确保每天不同但可重现
+      const taskIndex = (dayOfWeek + moduleKey.length) % themeTasks.length;
+      tasks[moduleKey] = {
+        ...themeTasks[taskIndex],
+        moduleName: module.name,
+        moduleIcon: module.icon,
+        moduleColor: module.color,
+        moduleGoal: module.goal,
+        modulePrinciple: module.principle,
+      };
+    }
+    return { theme, tasks };
+  },
+
+  // ===== 任务完成状态 =====
+  isTaskCompleted(taskId) {
+    const dayTasks = this.state.completedTasks[this.state.currentDate] || {};
+    return !!dayTasks[taskId];
+  },
+
+  toggleTask(taskId) {
+    if (!this.state.completedTasks[this.state.currentDate]) {
+      this.state.completedTasks[this.state.currentDate] = {};
+    }
+    const dayTasks = this.state.completedTasks[this.state.currentDate];
+    if (dayTasks[taskId]) {
+      delete dayTasks[taskId];
+    } else {
+      dayTasks[taskId] = { completedAt: new Date().toISOString() };
+    }
+    this.saveState();
+    this.renderTodayPage();
+    this.updateStats();
+  },
+
+  // ===== 统计 =====
+  getTodayStats() {
+    const { tasks } = this.getDailyTasks();
+    const total = Object.keys(tasks).length;
+    const dayTasks = this.state.completedTasks[this.state.currentDate] || {};
+    const completed = Object.keys(tasks).filter(k => {
+      const t = tasks[k];
+      return dayTasks[t.id];
+    }).length;
+    return { total, completed, percent: total > 0 ? Math.round(completed / total * 100) : 0 };
+  },
+
+  getWeekStats() {
+    // 统计过去7天完成率
+    let total = 0, completed = 0;
+    const themes = this.data.tasks.weeklyThemes;
+    const modules = this.data.tasks.modules;
+    for (let i = 0; i < 7; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const dateStr = `${y}-${m}-${dd}`;
+      const idx = this.getThemeIndexForDate(dateStr);
+      const theme = themes[idx];
+      const dow = new Date(dateStr).getDay();
+      for (const [mk, mod] of Object.entries(modules)) {
+        const tt = mod.tasksByTheme[theme.id] || [];
+        if (tt.length === 0) continue;
+        const ti = (dow + mk.length) % tt.length;
+        total++;
+        const dayTasks = this.state.completedTasks[dateStr] || {};
+        if (dayTasks[tt[ti].id]) completed++;
+      }
+    }
+    return { total, completed, percent: total > 0 ? Math.round(completed / total * 100) : 0 };
+  },
+
+  // ===== 发育观察 =====
+  isDevChecked(itemId) {
+    return !!this.state.devRecords[itemId];
+  },
+
+  toggleDev(itemId) {
+    if (this.state.devRecords[itemId]) {
+      delete this.state.devRecords[itemId];
+    } else {
+      this.state.devRecords[itemId] = { date: new Date().toISOString() };
+    }
+    this.saveState();
+    this.renderDevPage();
+  },
+
+  getDevStats() {
+    const cats = this.data.development.categories;
+    let total = 0, checked = 0;
+    const byCategory = {};
+    for (const cat of cats) {
+      let ct = 0, cc = 0;
+      for (const item of cat.items) {
+        total++; ct++;
+        if (this.isDevChecked(item.id)) { checked++; cc++; }
+      }
+      byCategory[cat.id] = { total: ct, checked: cc, percent: ct > 0 ? Math.round(cc / ct * 100) : 0 };
+    }
+    return { total, checked, percent: total > 0 ? Math.round(checked / total * 100) : 0, byCategory };
+  },
+
+  // ===== 渲染 =====
+  renderAll() {
+    this.renderTodayPage();
+    this.renderActivitiesPage();
+    this.renderDevPage();
+    this.renderToolsPage();
+    this.renderPrinciplesPage();
+    this.updateStats();
+  },
+
+  updateStats() {
+    const today = this.getTodayStats();
+    const el = document.getElementById('todayProgress');
+    if (el) {
+      el.style.width = today.percent + '%';
+      el.textContent = today.completed + '/' + today.total;
+    }
+  },
+
+  // ===== 首页渲染 =====
+  renderTodayPage() {
+    const container = document.getElementById('todayContent');
+    if (!container) return;
+
+    const { theme, tasks } = this.getDailyTasks();
+    const stats = this.getTodayStats();
+    const weekStats = this.getWeekStats();
+
+    // 格式化日期
+    const dateObj = new Date(this.state.currentDate);
+    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+    const dateStr = `${dateObj.getMonth() + 1}月${dateObj.getDate()}日 星期${weekdays[dateObj.getDay()]}`;
+
+    let html = `
+      <div class="theme-banner" style="background: linear-gradient(135deg, ${theme.color}, ${theme.color}dd);">
+        <div class="theme-banner-content">
+          <div class="theme-banner-icon">${theme.icon}</div>
+          <div>
+            <div class="theme-banner-label">本周主题</div>
+            <div class="theme-banner-name">${theme.name}</div>
+            <div class="theme-banner-desc">${theme.desc}</div>
+          </div>
+        </div>
+        <div class="theme-banner-date">${dateStr}</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">今日完成</div>
+          <div class="stat-value">${stats.completed}<span class="stat-total">/${stats.total}</span></div>
+          <div class="stat-bar"><div class="stat-bar-fill" style="width:${stats.percent}%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">本周完成率</div>
+          <div class="stat-value">${weekStats.percent}<span class="stat-total">%</span></div>
+          <div class="stat-bar"><div class="stat-bar-fill" style="width:${weekStats.percent}%; background:#7BC67E"></div></div>
+        </div>
+      </div>
+
+      <div class="section-title">📋 今日五大早教模块</div>
+      <div class="module-grid">
+    `;
+
+    const moduleOrder = ['fine_motor', 'language', 'cognition', 'english', 'gross_motor'];
+    for (const key of moduleOrder) {
+      const task = tasks[key];
+      if (!task) continue;
+      const done = this.isTaskCompleted(task.id);
+      html += `
+        <div class="module-card ${done ? 'completed' : ''}" onclick="App.toggleTask('${task.id}')">
+          <div class="module-card-header" style="border-left-color: ${task.moduleColor}">
+            <div class="module-card-icon">${task.moduleIcon}</div>
+            <div class="module-card-info">
+              <div class="module-card-name">${task.moduleName}</div>
+              <div class="module-card-goal">🎯 ${task.moduleGoal}</div>
+            </div>
+            <div class="module-check ${done ? 'checked' : ''}">
+              ${done ? '✓' : ''}
+            </div>
+          </div>
+          <div class="module-card-body">
+            <div class="task-title">${task.title}</div>
+            <div class="task-desc">${task.desc}</div>
+            <div class="task-meta">
+              <span class="task-tag">⏱ ${task.duration}</span>
+              ${task.materials && task.materials.length > 0 ? `<span class="task-tag">🧰 ${task.materials.join('、')}</span>` : ''}
+            </div>
+            <div class="task-principle">💡 ${task.modulePrinciple}</div>
+          </div>
+          <div class="module-card-footer">
+            ${done ? '✅ 已完成，点击取消' : '点击标记完成'}
+          </div>
+        </div>
+      `;
+    }
+
+    html += '</div>';
+
+    // 原则提醒
+    const principles = this.data.principles.principles;
+    html += `
+      <div class="section-title">🌟 养育原则提醒</div>
+      <div class="principles-strip">
+    `;
+    for (const p of principles) {
+      html += `
+        <div class="principle-chip">
+          <span class="principle-chip-icon">${p.icon}</span>
+          <span class="principle-chip-title">${p.title}</span>
+        </div>
+      `;
+    }
+    html += '</div>';
+
+    container.innerHTML = html;
+  },
+
+  // ===== 活动库渲染 =====
+  renderActivitiesPage(filterDomain = 'all', filterTheme = 'all') {
+    const container = document.getElementById('activitiesContent');
+    if (!container) return;
+
+    const domains = this.data.activities.domains;
+    const themes = this.data.activities.themes;
+    const activities = this.data.activities.activities;
+
+    let filterBar = `
+      <div class="filter-bar">
+        <div class="filter-group">
+          <div class="filter-label">发展领域</div>
+          <div class="filter-chips">
+            <button class="filter-chip ${filterDomain === 'all' ? 'active' : ''}" onclick="App.renderActivitiesPage('all','${filterTheme}')">全部</button>
+      `;
+    for (const d of domains) {
+      filterBar += `<button class="filter-chip ${filterDomain === d.id ? 'active' : ''}" onclick="App.renderActivitiesPage('${d.id}','${filterTheme}')">${d.icon} ${d.name}</button>`;
+    }
+    filterBar += `
+          </div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">主题</div>
+          <div class="filter-chips">
+            <button class="filter-chip ${filterTheme === 'all' ? 'active' : ''}" onclick="App.renderActivitiesPage('${filterDomain}','all')">全部</button>
+    `;
+    for (const t of themes) {
+      filterBar += `<button class="filter-chip ${filterTheme === t.id ? 'active' : ''}" onclick="App.renderActivitiesPage('${filterDomain}','${t.id}')">${t.name}</button>`;
+    }
+    filterBar += `
+          </div>
+        </div>
+      </div>
+    `;
+
+    let filtered = activities.filter(a => {
+      if (filterDomain !== 'all' && a.domain !== filterDomain) return false;
+      if (filterTheme !== 'all' && a.theme !== filterTheme) return false;
+      return true;
+    });
+
+    let cards = '<div class="activity-grid">';
+    if (filtered.length === 0) {
+      cards += '<div class="empty-state">暂无匹配活动，试试其他筛选组合 🤔</div>';
+    } else {
+      for (const a of filtered) {
+        const dName = domains.find(d => d.id === a.domain)?.name || '';
+        const dIcon = domains.find(d => d.id === a.domain)?.icon || '';
+        const tName = themes.find(t => t.id === a.theme)?.name || '';
+        cards += `
+          <div class="activity-card">
+            <div class="activity-card-header">
+              <span class="activity-domain">${dIcon} ${dName}</span>
+              <span class="activity-theme">${tName}</span>
+            </div>
+            <div class="activity-title">${a.title}</div>
+            <div class="activity-desc">${a.desc}</div>
+            <div class="activity-meta">
+              <span class="activity-tag">🧰 ${a.materials.join('、')}</span>
+              <span class="activity-tag">📅 ${a.age}</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+    cards += '</div>';
+
+    container.innerHTML = `
+      <div class="page-header">
+        <h2>🎯 活动库</h2>
+        <p>按发展领域和主题双筛选，全部使用真实生活物品，实物操作优于玩具</p>
+      </div>
+      ${filterBar}
+      <div class="filter-result">共 ${filtered.length} 个活动</div>
+      ${cards}
+    `;
+
+    // 更新筛选状态
+    this._currentActivityFilter = { domain: filterDomain, theme: filterTheme };
+  },
+
+  // ===== 发育观察渲染 =====
+  renderDevPage() {
+    const container = document.getElementById('devContent');
+    if (!container) return;
+
+    const stats = this.getDevStats();
+    const cats = this.data.development.categories;
+
+    let html = `
+      <div class="page-header">
+        <h2>📊 发育观察记录</h2>
+        <p>参考儿保内容，分五大类测评。打勾自动保存，数据存在本机</p>
+      </div>
+      <div class="dev-overview">
+        <div class="dev-overview-card">
+          <div class="dev-overview-circle" style="background: conic-gradient(#5C9FEC ${stats.percent*3.6}deg, #e8eef5 0deg);">
+            <div class="dev-overview-inner">
+              <span class="dev-overview-percent">${stats.percent}%</span>
+              <span class="dev-overview-label">${stats.checked}/${stats.total} 项</span>
+            </div>
+          </div>
+          <div class="dev-overview-info">
+            <div class="dev-overview-title">整体发育进度</div>
+            <div class="dev-overview-age">当前月龄：${this.data.development.meta.currentAge}</div>
+            <div class="dev-overview-note">${this.data.development.meta.note}</div>
+          </div>
+        </div>
+      </div>
+      <div class="dev-categories">
+    `;
+
+    for (const cat of cats) {
+      const catStat = stats.byCategory[cat.id];
+      html += `
+        <div class="dev-category">
+          <div class="dev-category-header">
+            <span class="dev-category-icon">${cat.icon}</span>
+            <span class="dev-category-name">${cat.name}</span>
+            <span class="dev-category-stat">${catStat.checked}/${catStat.total}</span>
+          </div>
+          <div class="dev-category-bar"><div class="dev-category-bar-fill" style="width:${catStat.percent}%"></div></div>
+          <div class="dev-items">
+      `;
+      for (const item of cat.items) {
+        const checked = this.isDevChecked(item.id);
+        const isCurrent = item.age === this.data.development.meta.currentAge;
+        html += `
+          <div class="dev-item ${checked ? 'checked' : ''} ${isCurrent ? 'current-age' : ''}" onclick="App.toggleDev('${item.id}')">
+            <div class="dev-item-check ${checked ? 'checked' : ''}">${checked ? '✓' : ''}</div>
+            <div class="dev-item-text">${item.text}</div>
+            <div class="dev-item-age">${item.age}</div>
+          </div>
+        `;
+      }
+      html += `
+          </div>
+        </div>
+      `;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+  },
+
+  // ===== 教具清单渲染 =====
+  renderToolsPage() {
+    const container = document.getElementById('toolsContent');
+    if (!container) return;
+
+    const data = this.data['teaching-tools'];
+
+    let html = `
+      <div class="page-header">
+        <h2>🧰 教具清单 & 探索空间</h2>
+        <p>全部极简低成本，优先家居物品和真实食材。五大功能区低成本可在家实现</p>
+      </div>
+
+      <div class="section-title">📦 教具分类清单</div>
+    `;
+
+    for (const cat of data.categories) {
+      html += `
+        <div class="tools-category">
+          <div class="tools-category-header">
+            <span class="tools-category-icon">${cat.icon}</span>
+            <span class="tools-category-name">${cat.name}</span>
+          </div>
+          <div class="tools-grid">
+      `;
+      for (const item of cat.items) {
+        const themeNames = (item.themes || []).map(t => {
+          const themes = this.data.activities.themes;
+          return themes.find(x => x.id === t)?.name || t;
+        });
+        html += `
+          <div class="tool-card">
+            <div class="tool-name">${item.name}</div>
+            <div class="tool-use">${item.use}</div>
+            <div class="tool-themes">${themeNames.map(t => `<span class="tool-theme-tag">${t}</span>`).join('')}</div>
+            ${item.cost ? `<div class="tool-cost">💰 ${item.cost}</div>` : ''}
+            ${item.how ? `<div class="tool-how">🔧 DIY：${item.how}</div>` : ''}
+          </div>
+        `;
+      }
+      html += '</div></div>';
+    }
+
+    // 探索空间
+    html += '<div class="section-title" style="margin-top:32px">🏠 五大功能区（探索空间）</div>';
+    html += '<div class="zones-grid">';
+    for (const zone of data.zones) {
+      html += `
+        <div class="zone-card">
+          <div class="zone-header">
+            <span class="zone-icon">${zone.icon}</span>
+            <div>
+              <div class="zone-name">${zone.name}</div>
+              <div class="zone-desc">${zone.desc}</div>
+            </div>
+          </div>
+          <ul class="zone-setup">
+            ${zone.setup.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+    html += '</div>';
+
+    container.innerHTML = html;
+  },
+
+  // ===== 养育原则渲染 =====
+  renderPrinciplesPage() {
+    const container = document.getElementById('principlesContent');
+    if (!container) return;
+
+    const principles = this.data.principles.principles;
+
+    let html = `
+      <div class="page-header">
+        <h2>🌟 专属宝宝养育原则</h2>
+        <p>这五条原则是固定不变的，是所有早教活动的基石</p>
+      </div>
+      <div class="principles-list">
+    `;
+
+    for (const p of principles) {
+      html += `
+        <div class="principle-card">
+          <div class="principle-icon-big">${p.icon}</div>
+          <div class="principle-content">
+            <div class="principle-title-big">${p.title}</div>
+            <div class="principle-text">${p.text}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    html += '</div>';
+
+    container.innerHTML = html;
+  },
+};
+
+// 页面导航
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
+
+  // 活动库需要重新渲染以保持筛选状态
+  if (pageId === 'page-activities' && App._currentActivityFilter) {
+    App.renderActivitiesPage(App._currentActivityFilter.domain, App._currentActivityFilter.theme);
+  }
+}
+
+// 启动
+document.addEventListener('DOMContentLoaded', () => App.init());
+
+</script>
+</body>
+</html>

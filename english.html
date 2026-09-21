@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>宝宝英语启蒙台</title>
+<style>
+:root{--primary:#7C5CFC;--primary-light:#D4C9FF;--bg:#f5f3ff;--card:#fff;--text:#3d3d3d;--text-light:#888;--border:#e8e0f0;--radius:16px;--radius-sm:10px;--shadow:0 2px 12px rgba(0,0,0,.06);--shadow-hover:0 4px 20px rgba(0,0,0,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:80px}
+.app-header{background:linear-gradient(135deg,#7C5CFC,#9B7FFF);color:#fff;padding:20px 16px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(124,92,252,.2)}
+.app-header h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.app-header .subtitle{font-size:12px;opacity:.9;margin-top:2px}
+.back-btn{position:absolute;top:18px;right:16px;background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 0 env(safe-area-inset-bottom,8px);border-top:1px solid var(--border);z-index:100;max-width:600px;margin:0 auto;box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+.nav-item{flex:1;text-align:center;padding:6px 4px;cursor:pointer;color:var(--text-light);font-size:11px;transition:color .2s;-webkit-tap-highlight-color:transparent}
+.nav-item .nav-icon{font-size:20px;display:block;margin-bottom:2px}
+.nav-item.active{color:var(--primary);font-weight:600}
+.page{display:none;max-width:600px;margin:0 auto;padding:16px;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.theme-banner{border-radius:var(--radius);padding:20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
+.theme-banner-content{display:flex;align-items:center;gap:16px}
+.theme-banner-icon{font-size:40px}
+.theme-banner-label{font-size:12px;opacity:.85}
+.theme-banner-name{font-size:22px;font-weight:700;margin:2px 0}
+.theme-banner-desc{font-size:13px;opacity:.9}
+.theme-banner-date{position:absolute;top:16px;right:20px;font-size:12px;background:rgba(255,255,255,.25);padding:4px 10px;border-radius:20px}
+.section-title{font-size:16px;font-weight:700;margin:20px 0 12px}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow)}
+.stat-label{font-size:12px;color:var(--text-light);margin-bottom:4px}
+.stat-value{font-size:28px;font-weight:700;color:var(--primary)}
+.stat-total{font-size:14px;color:var(--text-light);font-weight:400}
+.stat-bar{height:6px;background:#ede8f5;border-radius:3px;margin-top:8px;overflow:hidden}
+.stat-bar-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .5s ease}
+.vocab-card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin-bottom:12px;cursor:pointer;transition:all .25s;border:2px solid transparent}
+.vocab-card.completed{border-color:#81C784;background:#f8fbf8}
+.vocab-card-header{display:flex;align-items:center;gap:12px;padding:14px;border-left:4px solid var(--primary)}
+.vocab-word{font-size:22px;font-weight:700;color:var(--primary);flex:1}
+.vocab-meaning{font-size:14px;color:var(--text-light)}
+.vocab-check{width:28px;height:28px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0;transition:all .2s}
+.vocab-check.checked{background:#66BB6A;border-color:#66BB6A}
+.vocab-card-body{padding:0 14px 14px}
+.vocab-phrase{font-size:16px;font-weight:600;margin-bottom:4px;color:var(--primary)}
+.vocab-scene{font-size:13px;color:#555;line-height:1.5;margin-bottom:8px}
+.vocab-meta{display:flex;flex-wrap:wrap;gap:6px}
+.vocab-tag{background:#f5f3ff;padding:3px 8px;border-radius:6px;font-size:11px;color:#666}
+.song-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.song-title{font-size:16px;font-weight:700;color:var(--primary)}
+.song-title-cn{font-size:13px;color:var(--text-light);margin-bottom:8px}
+.song-lyrics{font-size:13px;color:#555;line-height:1.6;background:#f9f7ff;padding:10px;border-radius:8px;margin-bottom:8px;font-style:italic}
+.song-actions{font-size:12px;color:#666;margin-bottom:6px}
+.song-meta{display:flex;gap:8px}
+.song-tag{font-size:10px;background:var(--primary-light);color:var(--primary);padding:3px 8px;border-radius:6px}
+.scene-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.scene-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.scene-icon{font-size:24px}
+.scene-title{font-size:16px;font-weight:700}
+.phrase-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0e8f5}
+.phrase-row:last-child{border-bottom:none}
+.phrase-en{font-size:15px;font-weight:600;color:var(--primary);flex:1}
+.phrase-cn{font-size:13px;color:#555}
+.phrase-ctx{font-size:11px;color:var(--text-light);margin-top:2px}
+.game-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px;border-left:4px solid var(--primary)}
+.game-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.game-how{font-size:13px;color:#555;line-height:1.5;margin-bottom:8px}
+.game-english{font-size:12px;color:var(--primary);background:#f5f3ff;padding:8px;border-radius:6px;margin-bottom:6px;font-style:italic}
+.game-meta{display:flex;flex-wrap:wrap;gap:6px}
+.game-tag{font-size:11px;background:#f5f3ff;padding:3px 8px;border-radius:6px;color:#666}
+.principles-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.principle-chip{display:flex;align-items:center;gap:6px;background:#fff;padding:8px 12px;border-radius:20px;box-shadow:var(--shadow);white-space:nowrap;flex-shrink:0;font-size:12px}
+.page-header{margin-bottom:16px}
+.page-header h2{font-size:20px;font-weight:700}
+.page-header p{font-size:13px;color:var(--text-light);margin-top:4px}
+.vocab-list{display:flex;flex-direction:column;gap:0}
+.filter-bar{background:#fff;border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;box-shadow:var(--shadow)}
+.filter-label{font-size:12px;font-weight:600;color:var(--text-light);margin-bottom:6px}
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap}
+.filter-chip{border:1px solid var(--border);background:#fff;padding:5px 12px;border-radius:16px;font-size:12px;cursor:pointer;color:var(--text);transition:all .2s;-webkit-tap-highlight-color:transparent}
+.filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.speak-btn{background:var(--primary);color:#fff;border:none;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.speak-btn:active{transform:scale(.9);background:#6B4CE0}
+.speak-btn.speaking{animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.vocab-card-header .speak-btn{margin-left:8px}
+.phrase-speak{background:var(--primary-light);color:var(--primary);border:none;width:28px;height:28px;border-radius:50%;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.phrase-speak:active{transform:scale(.9)}
+.song-speak-btn{background:var(--primary);color:#fff;border:none;padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;margin-top:8px;-webkit-tap-highlight-color:transparent}
+.game-speak-btn{background:var(--primary-light);color:var(--primary);border:none;padding:4px 10px;border-radius:12px;font-size:11px;cursor:pointer;margin-top:6px;-webkit-tap-highlight-color:transparent}
+
+.yt-container{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin-top:10px;background:#000}
+.yt-container iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.yt-play-btn{background:#7C5CFC;color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:13px;cursor:pointer;margin-top:8px;display:inline-flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent}
+.yt-play-btn:active{transform:scale(.95)}
+
+.check-btn{width:28px;height:28px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0;transition:all .2s;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.check-btn.checked{background:#66BB6A;border-color:#66BB6A}
+.check-btn:active{transform:scale(.85)}
+.song-card.done-card,.scene-card.done-card,.game-card.done-card{border:2px solid #81C784;background:#f8fbf8}
+.daily-note{font-size:12px;color:var(--text-light);margin:-4px 0 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.done-tip{font-size:12px;color:#66BB6A;font-weight:600;margin-top:6px}
+.song-check-row{display:flex;gap:8px;margin-top:8px;align-items:center}
+.song-check-row .yt-play-btn{margin-top:0}
+.scene-header .check-btn{margin-left:auto}
+.game-check-row{display:flex;gap:8px;margin-top:6px;align-items:center}
+.game-check-row .game-speak-btn{margin-top:0}
+
+</style>
+</head>
+<body>
+<div class="app-header">
+<h1>🔤 宝宝英语启蒙台</h1>
+<div class="subtitle" id="enAgeSubtitle">12月龄 · 每日自动更新 · 中英主题同步</div>
+<button class="back-btn" onclick="goBack()">← 主工作台</button>
+</div>
+
+<div class="page active" id="page-today"><div id="todayContent"></div></div>
+<div class="page" id="page-vocab"><div id="vocabContent"></div></div>
+<div class="page" id="page-songs"><div id="songsContent"></div></div>
+<div class="page" id="page-scenes"><div id="scenesContent"></div></div>
+<div class="page" id="page-games"><div id="gamesContent"></div></div>
+
+<nav class="bottom-nav">
+<div class="nav-item active" data-page="page-today" onclick="showPage('page-today')"><span class="nav-icon">📋</span>今日</div>
+<div class="nav-item" data-page="page-vocab" onclick="showPage('page-vocab')"><span class="nav-icon">📖</span>词汇</div>
+<div class="nav-item" data-page="page-songs" onclick="showPage('page-songs')"><span class="nav-icon">🎵</span>儿歌</div>
+<div class="nav-item" data-page="page-scenes" onclick="showPage('page-scenes')"><span class="nav-icon">💬</span>对话</div>
+<div class="nav-item" data-page="page-games" onclick="showPage('page-games')"><span class="nav-icon">🎮</span>游戏</div>
+</nav>
+
+<script>
+const DATA = {
+  "meta": {
+    "targetAge": "11-24个月",
+    "birthDate": "2025-09-08",
+    "principle": "只磨耳朵、建立画面对应，不认读、不拼写、无压力",
+    "note": "周主题与主工作台同步轮换（颜色→食物→动物→身体→日用→家务→自然），中文教什么英文磨什么"
+  },
+  "weeklyThemes": [
+    { "id": "colors", "name": "Colors 颜色周", "icon": "🎨", "color": "#FF6B9D", "desc": "8大基础颜色" },
+    { "id": "food", "name": "Food 食物周", "icon": "🍎", "color": "#7BC67E", "desc": "常见食物" },
+    { "id": "animals", "name": "Animals 动物周", "icon": "🐯", "color": "#F4A261", "desc": "常见动物" },
+    { "id": "body", "name": "Body 身体周", "icon": "👀", "color": "#6BB6E8", "desc": "身体部位" },
+    { "id": "daily", "name": "Daily Things 日用周", "icon": "🥄", "color": "#B987E8", "desc": "日常用品" },
+    { "id": "housework", "name": "Housework 家务周", "icon": "🧹", "color": "#E8B14A", "desc": "家务劳动英文指令" },
+    { "id": "nature", "name": "Nature 自然周", "icon": "🌿", "color": "#5BC0A0", "desc": "自然元素" }
+  ],
+  "vocabulary": {
+    "colors": [
+      { "word": "Red", "meaning": "红色", "phrase": "Red apple", "scene": "指红苹果说 Red apple", "materials": ["红苹果","红球"] },
+      { "word": "Blue", "meaning": "蓝色", "phrase": "Blue ball", "scene": "拍蓝色球说 Blue ball", "materials": ["蓝色球"] },
+      { "word": "Yellow", "meaning": "黄色", "phrase": "Yellow banana", "scene": "拿香蕉说 Yellow banana", "materials": ["香蕉"] },
+      { "word": "Green", "meaning": "绿色", "phrase": "Green tree", "scene": "指树叶说 Green tree", "materials": ["树叶"] },
+      { "word": "Orange", "meaning": "橙色", "phrase": "Orange orange", "scene": "拿橘子说 Orange orange", "materials": ["橘子"] },
+      { "word": "Purple", "meaning": "紫色", "phrase": "Purple grape", "scene": "拿葡萄说 Purple grape", "materials": ["葡萄"] },
+      { "word": "Pink", "meaning": "粉色", "phrase": "Pink flower", "scene": "指粉色花说 Pink flower", "materials": ["粉色花"] },
+      { "word": "Brown", "meaning": "棕色", "phrase": "Brown bread", "scene": "拿面包说 Brown bread", "materials": ["面包"] }
+    ],
+    "animals": [
+      { "word": "Cat", "meaning": "猫", "phrase": "Cat says meow", "scene": "指猫卡片说 Cat, meow meow", "materials": ["猫卡片"] },
+      { "word": "Dog", "meaning": "狗", "phrase": "Dog says woof", "scene": "指狗说 Dog, woof woof", "materials": ["狗卡片"] },
+      { "word": "Duck", "meaning": "鸭子", "phrase": "Duck says quack", "scene": "指鸭子说 Duck, quack quack", "materials": ["鸭子卡片"] },
+      { "word": "Cow", "meaning": "牛", "phrase": "Cow says moo", "scene": "指牛说 Cow, moo moo", "materials": ["牛卡片"] },
+      { "word": "Pig", "meaning": "猪", "phrase": "Pig says oink", "scene": "指猪说 Pig, oink oink", "materials": ["猪卡片"] },
+      { "word": "Bird", "meaning": "鸟", "phrase": "Bird flies", "scene": "做飞动作说 Bird flies", "materials": ["鸟卡片"] },
+      { "word": "Fish", "meaning": "鱼", "phrase": "Fish swims", "scene": "做游泳动作说 Fish swims", "materials": ["鱼卡片"] },
+      { "word": "Rabbit", "meaning": "兔子", "phrase": "Rabbit jumps", "scene": "跳跃说 Rabbit jumps", "materials": ["兔子卡片"] }
+    ],
+    "food": [
+      { "word": "Apple", "meaning": "苹果", "phrase": "Eat apple", "scene": "吃苹果说 Eat apple, yummy", "materials": ["苹果"] },
+      { "word": "Banana", "meaning": "香蕉", "phrase": "Peel banana", "scene": "剥香蕉说 Peel banana", "materials": ["香蕉"] },
+      { "word": "Bread", "meaning": "面包", "phrase": "Eat bread", "scene": "吃面包说 Eat bread", "materials": ["面包"] },
+      { "word": "Milk", "meaning": "牛奶", "phrase": "Drink milk", "scene": "喝奶说 Drink milk", "materials": ["奶瓶"] },
+      { "word": "Egg", "meaning": "鸡蛋", "phrase": "Eat egg", "scene": "吃鸡蛋说 Eat egg", "materials": ["鸡蛋"] },
+      { "word": "Rice", "meaning": "米饭", "phrase": "Eat rice", "scene": "吃饭说 Eat rice", "materials": ["米饭"] },
+      { "word": "Water", "meaning": "水", "phrase": "Drink water", "scene": "喝水说 Drink water", "materials": ["水杯"] },
+      { "word": "Cookie", "meaning": "饼干", "phrase": "Eat cookie", "scene": "吃饼干说 Eat cookie, yummy", "materials": ["饼干"] }
+    ],
+    "body": [
+      { "word": "Eye", "meaning": "眼睛", "phrase": "Touch your eye", "scene": "指眼睛说 Eye, touch your eye", "materials": [] },
+      { "word": "Nose", "meaning": "鼻子", "phrase": "Touch your nose", "scene": "指鼻子说 Nose, touch your nose", "materials": [] },
+      { "word": "Mouth", "meaning": "嘴巴", "phrase": "Open your mouth", "scene": "指嘴巴说 Mouth, open your mouth", "materials": [] },
+      { "word": "Ear", "meaning": "耳朵", "phrase": "Touch your ear", "scene": "指耳朵说 Ear, touch your ear", "materials": [] },
+      { "word": "Hand", "meaning": "手", "phrase": "Clap your hands", "scene": "拍手说 Hand, clap your hands", "materials": [] },
+      { "word": "Foot", "meaning": "脚", "phrase": "Stomp your feet", "scene": "跺脚说 Foot, stomp your feet", "materials": [] },
+      { "word": "Head", "meaning": "头", "phrase": "Touch your head", "scene": "摸头说 Head, touch your head", "materials": [] },
+      { "word": "Tummy", "meaning": "肚子", "phrase": "Touch your tummy", "scene": "摸肚子说 Tummy, touch your tummy", "materials": [] }
+    ],
+    "daily": [
+      { "word": "Cup", "meaning": "杯子", "phrase": "Drink from cup", "scene": "拿杯子说 Cup, drink from cup", "materials": ["杯子"] },
+      { "word": "Bowl", "meaning": "碗", "phrase": "Bowl of rice", "scene": "指碗说 Bowl, bowl of rice", "materials": ["碗"] },
+      { "word": "Spoon", "meaning": "勺子", "phrase": "Eat with spoon", "scene": "拿勺子说 Spoon, eat with spoon", "materials": ["勺子"] },
+      { "word": "Ball", "meaning": "球", "phrase": "Roll the ball", "scene": "滚球说 Ball, roll the ball", "materials": ["球"] },
+      { "word": "Shoes", "meaning": "鞋子", "phrase": "Put on shoes", "scene": "穿鞋说 Shoes, put on shoes", "materials": ["鞋子"] },
+      { "word": "Hat", "meaning": "帽子", "phrase": "Put on hat", "scene": "戴帽说 Hat, put on hat", "materials": ["帽子"] },
+      { "word": "Book", "meaning": "书", "phrase": "Read a book", "scene": "看书说 Book, read a book", "materials": ["绘本"] },
+      { "word": "Chair", "meaning": "椅子", "phrase": "Sit on chair", "scene": "坐椅子说 Chair, sit on chair", "materials": ["椅子"] }
+    ],
+    "housework": [
+      { "word": "Clean", "meaning": "干净", "phrase": "All clean", "scene": "收拾完说 All clean!", "materials": [] },
+      { "word": "Wash", "meaning": "洗", "phrase": "Wash hands", "scene": "洗手时说 Wash hands", "materials": [] },
+      { "word": "Wipe", "meaning": "擦", "phrase": "Wipe the table", "scene": "擦桌子时说 Wipe the table", "materials": ["小抹布"] },
+      { "word": "Put away", "meaning": "收起来", "phrase": "Put away toys", "scene": "收玩具时说 Put away, toys", "materials": ["玩具", "收纳筐"] },
+      { "word": "Trash", "meaning": "垃圾", "phrase": "In the trash", "scene": "扔垃圾时说 Trash, in the trash", "materials": ["垃圾桶"] },
+      { "word": "Help", "meaning": "帮忙", "phrase": "Help mama", "scene": "宝宝帮忙时说 Help mama, thank you!", "materials": [] },
+      { "word": "Sweep", "meaning": "扫", "phrase": "Sweep sweep", "scene": "扫地时说 Sweep sweep the floor", "materials": ["小扫帚"] },
+      { "word": "Tidy", "meaning": "整齐", "phrase": "So tidy", "scene": "收拾完说 So tidy! Nice!", "materials": [] }
+    ],
+    "nature": [
+      { "word": "Tree", "meaning": "树", "phrase": "Big tree", "scene": "户外指树说 Tree, big tree", "materials": [] },
+      { "word": "Flower", "meaning": "花", "phrase": "Pretty flower", "scene": "指花说 Flower, pretty flower", "materials": ["花"] },
+      { "word": "Grass", "meaning": "草", "phrase": "Green grass", "scene": "摸草说 Grass, green grass", "materials": [] },
+      { "word": "Sun", "meaning": "太阳", "phrase": "Sun is warm", "scene": "指太阳说 Sun, sun is warm", "materials": [] },
+      { "word": "Moon", "meaning": "月亮", "phrase": "See the moon", "scene": "晚上指月亮说 Moon, see the moon", "materials": [] },
+      { "word": "Star", "meaning": "星星", "phrase": "Twinkle star", "scene": "指星星说 Star, twinkle star", "materials": [] },
+      { "word": "Rain", "meaning": "雨", "phrase": "Rain falls", "scene": "下雨天说 Rain, rain falls", "materials": [] },
+      { "word": "Wind", "meaning": "风", "phrase": "Wind blows", "scene": "感受风说 Wind, wind blows", "materials": [] }
+    ],
+    "family": [
+      { "word": "Mama", "meaning": "妈妈", "phrase": "Mama loves you", "scene": "指自己说 Mama, mama loves you", "materials": [] },
+      { "word": "Dada", "meaning": "爸爸", "phrase": "Dada is here", "scene": "指爸爸说 Dada, dada is here", "materials": [] },
+      { "word": "Baby", "meaning": "宝宝", "phrase": "Good baby", "scene": "指宝宝说 Baby, good baby", "materials": [] },
+      { "word": "Grandma", "meaning": "奶奶", "phrase": "Grandma hugs", "scene": "指奶奶说 Grandma, grandma hugs", "materials": [] },
+      { "word": "Grandpa", "meaning": "爷爷", "phrase": "Grandpa plays", "scene": "指爷爷说 Grandpa, grandpa plays", "materials": [] },
+      { "word": "Dog", "meaning": "狗狗", "phrase": "Dog is cute", "scene": "指狗说 Dog, dog is cute", "materials": [] },
+      { "word": "Cat", "meaning": "猫猫", "phrase": "Cat is soft", "scene": "指猫说 Cat, cat is soft", "materials": [] },
+      { "word": "Home", "meaning": "家", "phrase": "Sweet home", "scene": "回家说 Home, sweet home", "materials": [] }
+    ]
+  },
+  "songs": [
+    { "id": "song1", "title": "Twinkle Twinkle Little Star", "titleCn": "一闪一闪亮晶晶", "lyrics": "Twinkle twinkle little star, How I wonder what you are, Up above the world so high, Like a diamond in the sky", "actions": "双手张开合拢做闪烁动作，举高手指向天空", "themes": ["nature"], "duration": "2分钟" },
+    { "id": "song2", "title": "Old MacDonald Had a Farm", "titleCn": "老麦克唐纳有个农场", "lyrics": "Old MacDonald had a farm, E-I-E-I-O, And on his farm he had a cow, E-I-E-I-O, With a moo moo here, And a moo moo there", "actions": "模仿动物叫声和动作，牛moo、鸭quack、猪oink", "themes": ["animals"], "duration": "3分钟" },
+    { "id": "song3", "title": "Head Shoulders Knees and Toes", "titleCn": "头肩膀膝盖脚趾", "lyrics": "Head shoulders knees and toes, knees and toes, And eyes and ears and mouth and nose", "actions": "边唱边摸对应身体部位，越来越快", "themes": ["body"], "duration": "2分钟" },
+    { "id": "song4", "title": "The Wheels on the Bus", "titleCn": "公交车上的轮子", "lyrics": "The wheels on the bus go round and round, The doors on the bus go open and shut, The wipers on the bus go swish swish swish", "actions": "双手画圆做轮子转动，开门关门动作，雨刷动作", "themes": ["daily"], "duration": "3分钟" },
+    { "id": "song5", "title": "If You're Happy and You Know It", "titleCn": "如果感到幸福你就拍拍手", "lyrics": "If you're happy and you know it, clap your hands. If you're happy and you know it, stomp your feet. If you're happy and you know it, shout hooray", "actions": "拍手、跺脚、举臂欢呼，鼓励宝宝模仿", "themes": ["body","family"], "duration": "2分钟" },
+    { "id": "song6", "title": "Rain Rain Go Away", "titleCn": "雨雨走开", "lyrics": "Rain rain go away, come again another day, little baby wants to play, rain rain go away", "actions": "做下雨手势，摆手说go away", "themes": ["nature"], "duration": "1分钟" },
+    { "id": "song7", "title": "Row Row Row Your Boat", "titleCn": "划船歌", "lyrics": "Row row row your boat, gently down the stream, merrily merrily merrily merrily, life is but a dream", "actions": "和宝宝面对面坐，手拉手做划船动作前后摇晃", "themes": ["daily","body"], "duration": "1分钟" },
+    { "id": "song8", "title": "Baa Baa Black Sheep", "titleCn": "咩咩黑羊", "lyrics": "Baa baa black sheep, have you any wool? Yes sir yes sir, three bags full", "actions": "竖食指做1的手势，模仿羊叫baa baa", "themes": ["animals","colors"], "duration": "2分钟" },
+    { "id": "song9", "title": "Five Little Ducks", "titleCn": "五只小鸭子", "lyrics": "Five little ducks went swimming one day, over the hills and far away, mother duck said quack quack quack quack, but only four little ducks came back", "actions": "伸五指倒数，做鸭子嘴巴动作", "themes": ["animals"], "duration": "3分钟" },
+    { "id": "song10", "title": "Pat-a-Cake", "titleCn": "拍拍蛋糕", "lyrics": "Pat-a-cake pat-a-cake baker's man, bake me a cake as fast as you can, pat it and prick it and mark it with B, put it in the oven for baby and me", "actions": "和宝宝拍手，做拍蛋糕动作，画字母B", "themes": ["food","daily","housework"], "duration": "1分钟" },
+    { "id": "song11", "title": "Hickory Dickory Dock", "titleCn": "滴答滴答钟声响", "lyrics": "Hickory dickory dock, the mouse ran up the clock, the clock struck one, the mouse ran down, hickory dickory dock", "actions": "手指从下往上爬，到顶后拍一下再往下滑", "themes": ["daily","animals"], "duration": "1分钟" },
+    { "id": "song12", "title": "Ring Around the Rosie", "titleCn": "绕着玫瑰转圈圈", "lyrics": "Ring around the rosie, pocket full of posies, ashes ashes, we all fall down", "actions": "拉手转圈，唱到最后一起坐下", "themes": ["nature","body"], "duration": "1分钟" }
+  ],
+  "scenes": [
+    { "id": "scene1", "title": "Mealtime 吃饭时光", "icon": "🍽️", "phrases": [
+      { "en": "Time to eat!", "cn": "该吃饭啦", "context": "坐到餐椅上时说" },
+      { "en": "Yummy!", "cn": "真好吃", "context": "宝宝吃了一口后说" },
+      { "en": "More?", "cn": "还要吗", "context": "宝宝示意还要时说" },
+      { "en": "All done!", "cn": "吃完啦", "context": "宝宝吃完了说" },
+      { "en": "Drink water", "cn": "喝点水", "context": "递水杯时说" },
+      { "en": "Good eating!", "cn": "吃得真好", "context": "夸奖宝宝时说" }
+    ]},
+    { "id": "scene2", "title": "Bath Time 洗澡时光", "icon": "🛁", "phrases": [
+      { "en": "Bath time!", "cn": "洗澡时间到", "context": "准备洗澡时说" },
+      { "en": "Water is warm", "cn": "水暖暖的", "context": "试水温时说" },
+      { "en": "Wash your hands", "cn": "洗手手", "context": "洗手时说" },
+      { "en": "Wash your tummy", "cn": "洗肚肚", "context": "洗肚子时说" },
+      { "en": "Splash splash!", "cn": "拍水水", "context": "宝宝拍水时说" },
+      { "en": "All clean!", "cn": "洗干净啦", "context": "洗完说" }
+    ]},
+    { "id": "scene3", "title": "Bedtime 睡觉时光", "icon": "🌙", "phrases": [
+      { "en": "Time to sleep", "cn": "该睡觉啦", "context": "进卧室时说" },
+      { "en": "Good night", "cn": "晚安", "context": "躺下时说" },
+      { "en": "Sweet dreams", "cn": "做个好梦", "context": "盖好被子说" },
+      { "en": "Shhh, quiet", "cn": "嘘，安静", "context": "做安静手势说" },
+      { "en": "Mama loves you", "cn": "妈妈爱你", "context": "睡前说" },
+      { "en": "Close your eyes", "cn": "闭上眼睛", "context": "哄睡时说" }
+    ]},
+    { "id": "scene4", "title": "Getting Dressed 穿衣时光", "icon": "👕", "phrases": [
+      { "en": "Put on your shirt", "cn": "穿上衣", "context": "穿上衣时说" },
+      { "en": "Put on shoes", "cn": "穿鞋鞋", "context": "穿鞋时说" },
+      { "en": "Put on hat", "cn": "戴帽帽", "context": "戴帽时说" },
+      { "en": "Where's your sock?", "cn": "袜子呢", "context": "找袜子时说" },
+      { "en": "All dressed!", "cn": "穿好啦", "context": "穿完说" },
+      { "en": "You look nice!", "cn": "真好看", "context": "夸奖说" }
+    ]},
+    { "id": "scene5", "title": "Going Out 出门时光", "icon": "🚪", "phrases": [
+      { "en": "Let's go!", "cn": "走吧", "context": "出门时说" },
+      { "en": "Bye bye!", "cn": "拜拜", "context": "挥手告别时说" },
+      { "en": "Hold my hand", "cn": "拉着手", "context": "拉手时说" },
+      { "en": "Look at that!", "cn": "看那个", "context": "指东西说" },
+      { "en": "We're home!", "cn": "到家啦", "context": "回家时说" },
+      { "en": "Let's go outside", "cn": "出门啦", "context": "推门时说" }
+    ]},
+    { "id": "scene6", "title": "Playtime 玩耍时光", "icon": "🧸", "phrases": [
+      { "en": "Let's play!", "cn": "一起玩吧", "context": "开始玩时说" },
+      { "en": "Roll the ball", "cn": "滚球球", "context": "滚球时说" },
+      { "en": "Where is it?", "cn": "在哪里呢", "context": "藏东西说" },
+      { "en": "Here it is!", "cn": "在这里", "context": "找到时说" },
+      { "en": "Peek-a-boo!", "cn": "躲猫猫", "context": "捂脸游戏说" },
+      { "en": "Again?", "cn": "再来一次", "context": "宝宝想重复时说" }
+    ]}
+  ],
+  "games": [
+    { "id": "game1", "title": "Color Hunt 找颜色", "theme": "colors", "how": "说 Find something red，引导宝宝找红色物品", "materials": ["彩色物品"], "duration": "5分钟", "english": "Find red / Touch blue / Where is yellow?" },
+    { "id": "game2", "title": "Animal Sounds 动物叫声", "theme": "animals", "how": "说 What does a cat say? 引导宝宝模仿 meow", "materials": ["动物卡片"], "duration": "5分钟", "english": "What does a ___ say? / Meow / Woof / Quack / Moo" },
+    { "id": "game3", "title": "Touch Your Nose 摸五官", "theme": "body", "how": "说 Touch your nose! 让宝宝摸自己鼻子，换不同部位", "materials": [], "duration": "3分钟", "english": "Touch your nose / Touch your ear / Touch your tummy / Clap your hands" },
+    { "id": "game4", "title": "Where Is It? 藏找游戏", "theme": "daily", "how": "把物品藏在身后说 Where is the ball? 再拿出来 Here it is!", "materials": ["球或玩具"], "duration": "5分钟", "english": "Where is the ___? / Here it is! / Where did it go?" },
+    { "id": "game5", "title": "Peek-a-boo 躲猫猫", "theme": "family", "how": "捂脸说 Peek-a-boo! 再露脸说 I see you!", "materials": [], "duration": "3分钟", "english": "Peek-a-boo / I see you / Where is mama? / Here I am!" },
+    { "id": "game6", "title": "Big and Small 大和小", "theme": "daily", "how": "拿大球小球说 Big ball / Small ball", "materials": ["大小球"], "duration": "3分钟", "english": "Big / Small / Big ball / Small ball / Which is big?" },
+    { "id": "game7", "title": "Yum Yum 吃东西", "theme": "food", "how": "假装吃东西说 Yummy! 给宝宝也假装吃", "materials": ["食物/玩具食物"], "duration": "3分钟", "english": "Yummy / Yuck / Eat / Drink / More?" },
+    { "id": "game8", "title": "Up and Down 上和下", "theme": "body", "how": "举起宝宝说 Up! 放下说 Down!", "materials": [], "duration": "3分钟", "english": "Up / Down / Up up up / Down down down" },
+    { "id": "game9", "title": "Hello Bye Bye 打招呼", "theme": "family", "how": "挥手说 Hello! 再见说 Bye bye!", "materials": [], "duration": "2分钟", "english": "Hello / Bye bye / Hi / See you" },
+    { "id": "game10", "title": "Nature Walk 自然散步", "theme": "nature", "how": "户外指认说 Look! Tree! Flower! Sun!", "materials": [], "duration": "10分钟", "english": "Look / Tree / Flower / Sun / Wind / Rain" },
+    { "id": "game11", "title": "Clean Up 收拾游戏", "theme": "housework", "how": "收玩具时说 Clean up! Put it in!", "materials": ["玩具","收纳筐"], "duration": "5分钟", "english": "Clean up / Put it in / Thank you / Good job" },
+    { "id": "game12", "title": "Sing and Do 唱歌做动作", "theme": "body", "how": "唱 If you're happy 边唱边做动作", "materials": [], "duration": "3分钟", "english": "Clap your hands / Stomp your feet / Hooray" }
+  ]
+}
+;
+
+
+// 儿歌B站搜索映射
+const SONGS_BILI = {
+  "song1": "Twinkle Twinkle Little Star 英文儿歌",
+  "song2": "Old MacDonald Had a Farm 英文儿歌",
+  "song3": "Head Shoulders Knees and Toes 英文儿歌",
+  "song4": "Wheels on the Bus 英文儿歌",
+  "song5": "If You're Happy and You Know It 英文儿歌",
+  "song6": "Rain Rain Go Away 英文儿歌",
+  "song7": "Row Row Row Your Boat 英文儿歌",
+  "song8": "Baa Baa Black Sheep 英文儿歌",
+  "song9": "Five Little Ducks 英文儿歌",
+  "song10": "Pat-a-Cake 英文儿歌",
+  "song11": "Hickory Dickory Dock 英文儿歌",
+  "song12": "Ring Around the Rosie 英文儿歌"
+};
+
+// 跳转到B站播放歌曲（国内可访问）
+function playSong(songId) {
+  const query = SONGS_BILI[songId] || '';
+  if (!query) return;
+  window.open('https://search.bilibili.com/all?keyword=' + encodeURIComponent(query), '_blank');
+}
+
+// ===== 语音合成功能 =====
+let _voices = [];
+let _enVoice = null;
+function _loadVoices() {
+  _voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  _enVoice = _voices.find(v => v.lang.startsWith('en') && v.name.includes('Samantha')) ||
+             _voices.find(v => v.lang.startsWith('en') && v.name.includes('Google')) ||
+             _voices.find(v => v.lang === 'en-US') ||
+             _voices.find(v => v.lang.startsWith('en')) || null;
+}
+if (window.speechSynthesis) {
+  _loadVoices();
+  window.speechSynthesis.onvoiceschanged = _loadVoices;
+}
+
+function speak(text, btn) {
+  if (!window.speechSynthesis) { alert('当前浏览器不支持语音播放'); return; }
+  window.speechSynthesis.cancel(); // 停止上一个
+
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = 0.8;   // 稍慢，适合宝宝磨耳朵
+  u.pitch = 1.2;  // 稍高，更亲切
+  u.volume = 1;
+  if (_enVoice) u.voice = _enVoice;
+
+  if (btn) {
+    btn.classList.add('speaking');
+    u.onend = () => btn.classList.remove('speaking');
+    u.onerror = () => btn.classList.remove('speaking');
+  }
+  window.speechSynthesis.speak(u);
+}
+
+function speakMany(texts, btn) {
+  if (!window.speechSynthesis) { alert('当前浏览器不支持语音播放'); return; }
+  window.speechSynthesis.cancel();
+  if (btn) btn.classList.add('speaking');
+  let idx = 0;
+  function next() {
+    if (idx >= texts.length) {
+      if (btn) btn.classList.remove('speaking');
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(texts[idx]);
+    u.lang = 'en-US'; u.rate = 0.8; u.pitch = 1.2; u.volume = 1;
+    if (_enVoice) u.voice = _enVoice;
+    u.onend = () => { idx++; setTimeout(next, 400); };
+    u.onerror = () => { if (btn) btn.classList.remove('speaking'); };
+    window.speechSynthesis.speak(u);
+  }
+  next();
+}
+
+const App = {
+  state: { currentDate:null, completed:{} },
+  init() {
+    const t=new Date(); const y=t.getFullYear(); const m=String(t.getMonth()+1).padStart(2,'0'); const d=String(t.getDate()).padStart(2,'0');
+    this.state.currentDate = y+'-'+m+'-'+d;
+    this.renderAgeSubtitle();
+    this.loadState();
+    this.renderAll();
+  },
+  renderAgeSubtitle() {
+    const el=document.getElementById('enAgeSubtitle'); if(!el) return;
+    const birth=new Date(DATA.meta.birthDate+'T00:00:00');
+    const today=new Date(this.state.currentDate+'T00:00:00');
+    let months=(today.getFullYear()-birth.getFullYear())*12+(today.getMonth()-birth.getMonth());
+    if(today.getDate()<birth.getDate()) months--;
+    if(months<0) months=0;
+    const lastBday=new Date(today.getFullYear(),today.getMonth()+(today.getDate()>=birth.getDate()?0:-1),birth.getDate());
+    const daysInAge=Math.round((today-lastBday)/86400000);
+    el.textContent=`${months}月龄${daysInAge}天 · 每日更新 · 中英主题同步`;
+  },
+  loadState() { try { const s=localStorage.getItem('elw_en_state'); if(s){ this.state.completed=JSON.parse(s).completed||{}; } } catch(e){} },
+  saveState() { try { localStorage.setItem('elw_en_state', JSON.stringify({completed:this.state.completed})); } catch(e){} },
+  getThemeIndex() {
+    const anchor=new Date('2026-08-17'); const today=new Date(this.state.currentDate);
+    const diff=Math.floor((today-anchor)/(1000*60*60*24)); const wi=Math.floor(diff/7);
+    const themes=DATA.weeklyThemes; return ((wi%themes.length)+themes.length)%themes.length;
+  },
+  getCurrentTheme() { return DATA.weeklyThemes[this.getThemeIndex()]; },
+  getDayIndex() {
+    const anchor=new Date('2026-08-17'); const today=new Date(this.state.currentDate);
+    return Math.floor((today-anchor)/(1000*60*60*24));
+  },
+  // 每日词汇：滚动复习，每天前进1个词，连续取3个，8天一循环（1新2旧）
+  getTodayVocab() {
+    const theme=this.getCurrentTheme(); const words=DATA.vocabulary[theme.id]||[];
+    if(!words.length) return [];
+    const dayIdx=this.getDayIndex();
+    return [0,1,2].map(i=>({...words[(dayIdx+i)%words.length]}));
+  },
+  // 每日儿歌：1首本周主题轮换 + 1首全库错开轮换（主题歌不足时自动补全库）
+  getTodaySongs() {
+    const theme=this.getCurrentTheme(); const dayIdx=this.getDayIndex();
+    const themeSongs=DATA.songs.filter(s=>s.themes.includes(theme.id));
+    const list=[];
+    if(themeSongs.length) list.push(themeSongs[dayIdx%themeSongs.length]);
+    const pool=DATA.songs.filter(s=>!list.find(x=>x.id===s.id));
+    const need=themeSongs.length>=2?1:2-list.length; // 至少凑满2首
+    for(let i=0;i<need && pool.length;i++){
+      const s=pool[(dayIdx*5+3+i*3)%pool.length];
+      if(!list.find(x=>x.id===s.id)) list.push(s);
+    }
+    return list;
+  },
+  // 每日场景：6大场景每天轮换1个
+  getTodayScene() {
+    const dayIdx=this.getDayIndex();
+    return DATA.scenes[dayIdx%DATA.scenes.length];
+  },
+  // 每日游戏：1个本周主题轮换 + 1个全库错开轮换
+  getTodayGames() {
+    const theme=this.getCurrentTheme(); const dayIdx=this.getDayIndex();
+    const themeGames=DATA.games.filter(g=>g.theme===theme.id);
+    const list=[];
+    if(themeGames.length) list.push(themeGames[dayIdx%themeGames.length]);
+    const pool=DATA.games.filter(g=>!list.find(x=>x.id===g.id));
+    if(pool.length) list.push(pool[(dayIdx*7+5)%pool.length]);
+    return list;
+  },
+  isDone(id) { return !!(this.state.completed[this.state.currentDate]||{})[id]; },
+  toggle(id) {
+    if(!this.state.completed[this.state.currentDate]) this.state.completed[this.state.currentDate]={};
+    const d=this.state.completed[this.state.currentDate];
+    if(d[id]) delete d[id]; else d[id]={at:new Date().toISOString()};
+    this.saveState(); this.renderToday();
+  },
+  getStats() {
+    const vocab=this.getTodayVocab(); const songs=this.getTodaySongs();
+    const scene=this.getTodayScene(); const games=this.getTodayGames();
+    const ids=[
+      ...vocab.map(w=>w.word),
+      ...songs.map(s=>'song:'+s.id),
+      'scene:'+(scene?scene.id:''),
+      ...games.map(g=>'game:'+g.id)
+    ].filter(Boolean);
+    const done=ids.filter(id=>this.isDone(id)).length;
+    const vocabDone=vocab.filter(w=>this.isDone(w.word)).length;
+    return {total:ids.length,done,percent:ids.length?Math.round(done/ids.length*100):0,vocabDone,vocabTotal:vocab.length};
+  },
+  renderAll() { this.renderToday(); this.renderVocab(); this.renderSongs(); this.renderScenes(); this.renderGames(); },
+  renderToday() {
+    const c=document.getElementById('todayContent'); if(!c) return;
+    const theme=this.getCurrentTheme();
+    const vocab=this.getTodayVocab(); const songs=this.getTodaySongs();
+    const scene=this.getTodayScene(); const games=this.getTodayGames();
+    const stats=this.getStats();
+    const dayIdx=this.getDayIndex(); const weekDay=((dayIdx%7)+7)%7+1;
+    const allDone=stats.total>0&&stats.done>=stats.total;
+    const dateObj=new Date(this.state.currentDate);
+    const wd=['日','一','二','三','四','五','六'];
+    let html=`
+      <div class="theme-banner" style="background:linear-gradient(135deg,${theme.color},${theme.color}dd);">
+        <div class="theme-banner-content">
+          <div class="theme-banner-icon">${theme.icon}</div>
+          <div>
+            <div class="theme-banner-label">本周英语主题</div>
+            <div class="theme-banner-name">${theme.name}</div>
+            <div class="theme-banner-desc">${theme.desc}</div>
+          </div>
+        </div>
+        <div class="theme-banner-date">${dateObj.getMonth()+1}月${dateObj.getDate()}日 周${wd[dateObj.getDay()]} · 本周第${weekDay}天</div>
+      </div>
+      <div class="daily-note">🔄 <b>每日自动更新</b> · 启用第${dayIdx+1}天 · 词汇滚动复习 · 儿歌/场景/游戏每日轮换</div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">今日任务（词汇+儿歌+对话+游戏）</div><div class="stat-value" ${allDone?'style="color:#66BB6A"':''}>${stats.done}<span class="stat-total">/${stats.total}</span></div><div class="stat-bar"><div class="stat-bar-fill" style="width:${stats.percent}%;${allDone?'background:#66BB6A':''}"></div></div>${allDone?'<div class="done-tip">🎉 今日全部完成，宝宝超棒！</div>':''}</div>
+        <div class="stat-card"><div class="stat-label">今日词汇</div><div class="stat-value">${stats.vocabDone}<span class="stat-total">/${stats.vocabTotal}</span></div><div class="stat-bar"><div class="stat-bar-fill" style="width:${stats.vocabTotal?Math.round(stats.vocabDone/stats.vocabTotal*100):0}%"></div></div></div>
+      </div>`;
+    html+=`<div class="section-title">📖 今日词汇（滚动复习 · 1新2旧）</div>`;
+    for(const w of vocab) {
+      const done=this.isDone(w.word);
+      html+=`<div class="vocab-card ${done?'completed':''}">
+        <div class="vocab-card-header" style="border-left-color:${theme.color}">
+          <div><div class="vocab-word">${w.word}</div><div class="vocab-meaning">${w.meaning}</div></div>
+          <button class="speak-btn" onclick="event.stopPropagation();speak('${w.word}',this)">🔊</button>
+          <div class="vocab-check ${done?'checked':''}" onclick="event.stopPropagation();App.toggle('${w.word}')">${done?'✓':''}</div>
+        </div>
+        <div class="vocab-card-body">
+          <div class="vocab-phrase" style="color:${theme.color}" onclick="event.stopPropagation();speak('${w.phrase}',this)">💬 ${w.phrase} <span style="font-size:12px;opacity:.6">👆点击朗读</span></div>
+          <div class="vocab-scene">📍 ${w.scene}</div>
+          <div class="vocab-meta">${w.materials&&w.materials.length?`<span class="vocab-tag">🧰 ${w.materials.join('、')}</span>`:''}</div>
+        </div>
+      </div>`;
+    }
+    html+=`<div class="section-title">🎵 今日儿歌（每天轮换2首）</div>`;
+    for(const s of songs) {
+      const sid='song:'+s.id; const done=this.isDone(sid);
+      html+=`<div class="song-card ${done?'done-card':''}">
+        <div class="song-title">${s.title} ${done?'<span style="color:#66BB6A">✓</span>':''}</div>
+        <div class="song-title-cn">${s.titleCn}</div>
+        <div class="song-lyrics">${s.lyrics}</div>
+        <div class="song-actions">👐 动作：${s.actions}</div>
+        <div class="song-check-row">
+          <button class="yt-play-btn" onclick="playSong('${s.id}')">🎵 播放歌曲</button>
+          <button class="song-speak-btn" onclick="speakMany([\'${s.lyrics.replace(/,/g,"','").replace(/'/g,"\\'")}\'],this)">🔊 朗读歌词</button>
+          <div class="check-btn ${done?'checked':''}" onclick="App.toggle('${sid}')">${done?'✓':''}</div>
+        </div>
+      </div>`;
+    }
+    if(scene) {
+      const scid='scene:'+scene.id; const done=this.isDone(scid);
+      html+=`<div class="section-title">💬 今日场景对话（每天轮换1个场景）</div>
+      <div class="scene-card ${done?'done-card':''}">
+        <div class="scene-header"><span class="scene-icon">${scene.icon}</span><span class="scene-title">${scene.title}</span><div class="check-btn ${done?'checked':''}" onclick="App.toggle('${scid}')">${done?'✓':''}</div></div>`;
+      for(const p of scene.phrases) {
+        html+=`<div class="phrase-row">
+          <div style="flex:1;cursor:pointer" onclick="speak('${p.en.replace(/'/g,"\\'")}',this)">
+            <div class="phrase-en">${p.en} <span style="font-size:12px;opacity:.5">🔊</span></div>
+            <div class="phrase-cn">${p.cn}</div>
+            <div class="phrase-ctx">${p.context}</div>
+          </div>
+        </div>`;
+      }
+      html+=`</div>`;
+    }
+    html+=`<div class="section-title">🎮 今日互动游戏（每天轮换2个）</div>`;
+    for(const g of games) {
+      const gid='game:'+g.id; const done=this.isDone(gid);
+      html+=`<div class="game-card ${done?'done-card':''}" style="border-left-color:${theme.color}">
+        <div class="game-title">${g.title} ${done?'<span style="color:#66BB6A">✓</span>':''}</div>
+        <div class="game-how">${g.how}</div>
+        <div class="game-english">${g.english}</div>
+        <div class="game-check-row">
+          <button class="game-speak-btn" onclick="speak('${g.english.replace(/'/g,"\\'").replace(/\//g," ")}',this)">🔊 朗读英文</button>
+          <div class="check-btn ${done?'checked':''}" onclick="App.toggle('${gid}')">${done?'✓':''}</div>
+        </div>
+        <div class="game-meta">
+          <span class="game-tag">⏱ ${g.duration}</span>
+          <span class="game-tag">🧰 ${g.materials.join('、')||'无需材料'}</span>
+        </div>
+      </div>`;
+    }
+    html+=`<div class="section-title">🌟 磨耳朵原则</div>
+    <div class="principles-strip">
+      <div class="principle-chip"><span>👂</span>只磨耳朵不认读</div>
+      <div class="principle-chip"><span>🤫</span>不跟读不强迫</div>
+      <div class="principle-chip"><span>🏠</span>融入日常场景</div>
+      <div class="principle-chip"><span>👶</span>建立画面对应</div>
+      <div class="principle-chip"><span>💛</span>无压力输入</div>
+    </div>`;
+    c.innerHTML=html;
+  },
+  renderVocab() {
+    const c=document.getElementById('vocabContent'); if(!c) return;
+    let html='<div class="page-header"><h2>📖 词汇库</h2><p>7大主题 · 每周一个主题 · 每日滚动复习</p></div>';
+    for(const theme of DATA.weeklyThemes) {
+      const words=DATA.vocabulary[theme.id]||[];
+      html+=`<div class="section-title" style="color:${theme.color}">${theme.icon} ${theme.name}</div>`;
+      for(const w of words) {
+        html+=`<div class="vocab-card" style="margin-bottom:8px">
+          <div class="vocab-card-header" style="border-left-color:${theme.color};padding:10px 14px">
+            <div><span class="vocab-word" style="font-size:18px">${w.word}</span> <span class="vocab-meaning">${w.meaning}</span></div>
+            <button class="speak-btn" onclick="event.stopPropagation();speak('${w.word}',this)">🔊</button>
+          </div>
+          <div class="vocab-card-body" style="padding:0 14px 10px">
+            <div class="vocab-phrase" style="color:${theme.color};font-size:14px" onclick="speak('${w.phrase}',this)">💬 ${w.phrase} <span style="font-size:11px;opacity:.6">👆朗读</span></div>
+            <div class="vocab-scene" style="font-size:12px">📍 ${w.scene}</div>
+          </div>
+        </div>`;
+      }
+    }
+    // 常备词汇：家庭成员（不进周轮换，随时用）
+    const familyWords=DATA.vocabulary.family||[];
+    if(familyWords.length){
+      html+=`<div class="section-title" style="color:#E8B14A">🏡 家庭成员（常备词汇）</div>`;
+      for(const w of familyWords) {
+        html+=`<div class="vocab-card" style="margin-bottom:8px">
+          <div class="vocab-card-header" style="border-left-color:#E8B14A;padding:10px 14px">
+            <div><span class="vocab-word" style="font-size:18px">${w.word}</span> <span class="vocab-meaning">${w.meaning}</span></div>
+            <button class="speak-btn" onclick="event.stopPropagation();speak('${w.word}',this)">🔊</button>
+          </div>
+          <div class="vocab-card-body" style="padding:0 14px 10px">
+            <div class="vocab-phrase" style="color:#E8B14A;font-size:14px" onclick="speak('${w.phrase}',this)">💬 ${w.phrase} <span style="font-size:11px;opacity:.6">👆朗读</span></div>
+            <div class="vocab-scene" style="font-size:12px">📍 ${w.scene}</div>
+          </div>
+        </div>`;
+      }
+    }
+    c.innerHTML=html;
+  },
+  renderSongs() {
+    const c=document.getElementById('songsContent'); if(!c) return;
+    let html='<div class="page-header"><h2>🎵 磨耳朵儿歌库</h2><p>12首经典英文儿歌，配互动动作</p></div>';
+    for(const s of DATA.songs) {
+      
+      html+=`<div class="song-card">
+        <div class="song-title">${s.title}</div>
+        <div class="song-title-cn">${s.titleCn}</div>
+        <div class="song-lyrics">${s.lyrics}</div>
+        <div class="song-actions">👐 动作：${s.actions}</div>
+        <div class="song-meta">
+          <span class="song-tag">⏱ ${s.duration}</span>
+          ${s.themes.map(t=>{const th=DATA.weeklyThemes.find(x=>x.id===t);return th?`<span class="song-tag">${th.icon} ${th.name.split(' ')[0]}</span>`:'';}).join('')}
+        </div>
+        <button class="yt-play-btn" onclick="playSong('${s.id}')">🎵 播放歌曲</button>
+        <button class="song-speak-btn" onclick="speakMany([\'${s.lyrics.replace(/,/g,"','").replace(/'/g,"\'")}\'],this)">🔊 朗读歌词</button>
+      </div>`;
+    }
+    c.innerHTML=html;
+  },
+  renderScenes() {
+    const c=document.getElementById('scenesContent'); if(!c) return;
+    let html='<div class="page-header"><h2>💬 日常场景对话</h2><p>6大生活场景，全程英文短句输入</p></div>';
+    for(const sc of DATA.scenes) {
+      html+=`<div class="scene-card">
+        <div class="scene-header"><span class="scene-icon">${sc.icon}</span><span class="scene-title">${sc.title}</span></div>`;
+      for(const p of sc.phrases) {
+        html+=`<div class="phrase-row">
+          <div style="flex:1;cursor:pointer" onclick="speak('${p.en.replace(/'/g,"\'")}',this)">
+            <div class="phrase-en">${p.en} <span style="font-size:12px;opacity:.5">🔊</span></div>
+            <div class="phrase-cn">${p.cn}</div>
+            <div class="phrase-ctx">${p.context}</div>
+          </div>
+        </div>`;
+      }
+      html+=`</div>`;
+    }
+    c.innerHTML=html;
+  },
+  renderGames() {
+    const c=document.getElementById('gamesContent'); if(!c) return;
+    let html='<div class="page-header"><h2>🎮 互动游戏库</h2><p>12个英语互动小游戏，实物操作磨耳朵</p></div>';
+    for(const g of DATA.games) {
+      const theme=DATA.weeklyThemes.find(t=>t.id===g.theme);
+      html+=`<div class="game-card" style="border-left-color:${theme?theme.color:'var(--primary)'}">
+        <div class="game-title">${g.title}</div>
+        <div class="game-how">${g.how}</div>
+        <div class="game-english">${g.english}</div>
+        <button class="game-speak-btn" onclick="speak('${g.english.replace(/'/g,"\'").replace(/\//g," ")}',this)">🔊 朗读英文</button>
+        <div class="game-meta">
+          <span class="game-tag">⏱ ${g.duration}</span>
+          <span class="game-tag">🧰 ${g.materials.join('、')||'无需材料'}</span>
+          ${theme?`<span class="game-tag">${theme.icon} ${theme.name.split(' ')[0]}</span>`:''}
+        </div>
+      </div>`;
+    }
+    c.innerHTML=html;
+  }
+};
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelector('.nav-item[data-page="'+id+'"]')?.classList.add('active');
+}
+function goBack() {
+  window.location.href = '/';
+}
+document.addEventListener('DOMContentLoaded',()=>App.init());
+</script>
+</body>
+</html>
